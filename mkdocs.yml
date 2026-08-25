@@ -1,5 +1,5 @@
 site_name: go-xrkit docs
-site_description: "Pure-Go (CGO=0) geometry for immersive video: head orientation, stereo frame packing, and flat/equirectangular/fisheye projection, precomputed into a warp table. Zero dependencies, 100% coverage."
+site_description: "Pure-Go (CGO=0) geometry for immersive video: head orientation, stereo frame packing, and flat/equirectangular/fisheye projection, precomputed into a warp table, plus the 360 ribbon screens sit on and a graded catalogue of what each headset can actually show. One dependency, 100% coverage."
 site_url: https://go-xrkit.github.io/docs/
 repo_url: https://github.com/go-xrkit/xrkit
 repo_name: go-xrkit/xrkit
@@ -44,6 +44,7 @@ nav:
   - Home: index.md
   - Packages: packages.md
   - Architecture: architecture.md
+  - Repositories: repositories.md
   - Roadmap: roadmap.md
 
 markdown_extensions:

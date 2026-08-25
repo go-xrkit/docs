@@ -95,3 +95,49 @@ projection, source dimensions — and must be rebuilt if any of those change.
 
 **Measured**, reshaping both eyes at once: **~3 ms at 4K**, **~8 ms at 8K**,
 zero allocations per frame — against a 16.6 ms budget at 60 Hz.
+
+## ribbon
+
+Screens on a 360° band: where each one sits, and how they composite into one
+equirectangular panorama by yaw.
+
+The reason this is a package and not a loop in an application is a performance
+fact that decides the whole design. Building a `warp.Map` costs **56.5 ms**, and
+there are **16.6 ms** in a frame at 60 Hz — so a ribbon whose yaw changed the
+warp table could never be turned. But on an equirectangular panorama a yaw is
+**exactly a horizontal shift**. So the yaw is applied when the screens are
+composited into the panorama, where it costs nothing at all, and the distortion
+table is never rebuilt.
+
+`ribbon` also decides how many screens fit and how wide each one is, from the
+headset's own optics rather than from configuration: each screen gets exactly
+one eye's resolution and exactly the arc that eye can see, so looking straight
+at one shows it edge to edge at one source pixel per output pixel.
+
+## glasses
+
+Which display is the headset, and how wide is the view.
+
+Every entry in the catalogue records **how far it has been checked**, because
+almost everything about a headset is read off a specification sheet, and a field
+of view taken from a wrong data sheet renders everything in the wrong place
+while nothing about the picture says so:
+
+| Confidence | Meaning |
+| --- | --- |
+| `Observed` | connected, and its modes seen |
+| `Enumerated` | seen on the bus, but its video was never connected |
+| `Published` | sourced and cited, never plugged in here |
+
+Identification is not one thing — a display name, a USB vendor/product pair and
+a mode list each answer a different question, and the package keeps them
+separate rather than pretending one implies another.
+
+The catalogue will always be behind the hardware, so a model can be declared in
+an HCL file under the platform's config directory, and a user entry wins ties
+against the built-in one. HCL is the module's **one dependency**, and it is
+there for a specific reason: a figure about a headset is only worth something
+with its provenance attached, and HCL has *comments*, so what you measured sits
+next to the number you measured it from. A file that exists and is wrong is an
+error naming the file, the line and the block — a catalogue line that quietly
+does nothing is the same invisible failure as a wrong angle.

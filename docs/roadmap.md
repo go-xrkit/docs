@@ -2,14 +2,24 @@
 
 ## Shipped
 
-**`go-xrkit/xrkit`** — `pose`, `stereo`, `projection` and `warp` are complete
-and gated at 100% statement coverage, zero dependencies, six architectures.
+**`go-xrkit/xrkit`** — `pose`, `stereo`, `projection`, `warp`, `ribbon` and
+`glasses` are complete and gated at 100% statement coverage, on six
+architectures. One dependency: HCL, and only for the user glasses catalogue.
 
 **`go-xrkit/player`** (`xrplay`) — plays 360°, VR180 and 3D film files on XR
 glasses: detects projection/layout from the file, decodes on the GPU via
 [go-macos/avfoundation](https://github.com/go-macos/avfoundation), warps each
 eye through `xrkit`, and shows the result full screen on the glasses' own
 display via [go-widgets/window](https://github.com/go-widgets/window).
+
+**`go-xrkit/desk`** — several computer screens on a 360° ribbon inside AR
+glasses, scrolled from the keyboard. Real virtual displays that macOS extends
+the desktop onto, captured and drawn as curved screens.
+
+**`go-xrkit/android`** — screen capture on Android as an ordinary
+`CGO_ENABLED=0` Go binary talking to a small Java host over a socket, plus a
+documented account, with transcripts, of the four different ways Android 15
+refuses to let an app create a display it can launch anything onto.
 
 ## Known limits, today
 
