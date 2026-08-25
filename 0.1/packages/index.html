@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Pure-Go (CGO=0) geometry for immersive video: head orientation, stereo frame packing, and flat/equirectangular/fisheye projection, precomputed into a warp table. Zero dependencies, 100% coverage.">
+        <meta name="description" content="Pure-Go (CGO=0) geometry for immersive video: head orientation, stereo frame packing, and flat/equirectangular/fisheye projection, precomputed into a warp table, plus the 360 ribbon screens sit on and a graded catalogue of what each headset can actually show. One dependency, 100% coverage.">
       
       
       
@@ -370,6 +370,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#ribbon" class="md-nav__link">
+    <span class="md-ellipsis">
+      ribbon
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glasses" class="md-nav__link">
+    <span class="md-ellipsis">
+      glasses
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -390,6 +408,26 @@
   
   <span class="md-ellipsis">
     Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repositories/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Repositories
   </span>
   
 
@@ -475,6 +513,24 @@
   <a href="#warp" class="md-nav__link">
     <span class="md-ellipsis">
       warp
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ribbon" class="md-nav__link">
+    <span class="md-ellipsis">
+      ribbon
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glasses" class="md-nav__link">
+    <span class="md-ellipsis">
+      glasses
     </span>
   </a>
   
@@ -568,6 +624,59 @@ visible artefact is the magnification itself, not the interpolation.</p>
 projection, source dimensions — and must be rebuilt if any of those change.</p>
 <p><strong>Measured</strong>, reshaping both eyes at once: <strong>~3 ms at 4K</strong>, <strong>~8 ms at 8K</strong>,
 zero allocations per frame — against a 16.6 ms budget at 60 Hz.</p>
+<h2 id="ribbon">ribbon<a class="headerlink" href="#ribbon" title="Permanent link">&para;</a></h2>
+<p>Screens on a 360° band: where each one sits, and how they composite into one
+equirectangular panorama by yaw.</p>
+<p>The reason this is a package and not a loop in an application is a performance
+fact that decides the whole design. Building a <code>warp.Map</code> costs <strong>56.5 ms</strong>, and
+there are <strong>16.6 ms</strong> in a frame at 60 Hz — so a ribbon whose yaw changed the
+warp table could never be turned. But on an equirectangular panorama a yaw is
+<strong>exactly a horizontal shift</strong>. So the yaw is applied when the screens are
+composited into the panorama, where it costs nothing at all, and the distortion
+table is never rebuilt.</p>
+<p><code>ribbon</code> also decides how many screens fit and how wide each one is, from the
+headset's own optics rather than from configuration: each screen gets exactly
+one eye's resolution and exactly the arc that eye can see, so looking straight
+at one shows it edge to edge at one source pixel per output pixel.</p>
+<h2 id="glasses">glasses<a class="headerlink" href="#glasses" title="Permanent link">&para;</a></h2>
+<p>Which display is the headset, and how wide is the view.</p>
+<p>Every entry in the catalogue records <strong>how far it has been checked</strong>, because
+almost everything about a headset is read off a specification sheet, and a field
+of view taken from a wrong data sheet renders everything in the wrong place
+while nothing about the picture says so:</p>
+<table>
+<thead>
+<tr>
+<th>Confidence</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Observed</code></td>
+<td>connected, and its modes seen</td>
+</tr>
+<tr>
+<td><code>Enumerated</code></td>
+<td>seen on the bus, but its video was never connected</td>
+</tr>
+<tr>
+<td><code>Published</code></td>
+<td>sourced and cited, never plugged in here</td>
+</tr>
+</tbody>
+</table>
+<p>Identification is not one thing — a display name, a USB vendor/product pair and
+a mode list each answer a different question, and the package keeps them
+separate rather than pretending one implies another.</p>
+<p>The catalogue will always be behind the hardware, so a model can be declared in
+an HCL file under the platform's config directory, and a user entry wins ties
+against the built-in one. HCL is the module's <strong>one dependency</strong>, and it is
+there for a specific reason: a figure about a headset is only worth something
+with its provenance attached, and HCL has <em>comments</em>, so what you measured sits
+next to the number you measured it from. A file that exists and is wrong is an
+error naming the file, the line and the block — a catalogue line that quietly
+does nothing is the same invisible failure as a wrong angle.</p>
 
 
 

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Pure-Go (CGO=0) geometry for immersive video: head orientation, stereo frame packing, and flat/equirectangular/fisheye projection, precomputed into a warp table. Zero dependencies, 100% coverage.">
+        <meta name="description" content="Pure-Go (CGO=0) geometry for immersive video: head orientation, stereo frame packing, and flat/equirectangular/fisheye projection, precomputed into a warp table, plus the 360 ribbon screens sit on and a graded catalogue of what each headset can actually show. One dependency, 100% coverage.">
       
       
       
@@ -385,6 +385,26 @@
   
   
     <li class="md-nav__item">
+      <a href="repositories/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Repositories
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="roadmap/" class="md-nav__link">
         
   
@@ -458,11 +478,13 @@
 
 
 <h1 id="go-xrkit-documentation">go-xrkit documentation<a class="headerlink" href="#go-xrkit-documentation" title="Permanent link">&para;</a></h1>
-<p><strong>The geometry an immersive video player needs, as pure Go with no
-dependencies:</strong> orientation, stereo frame packing, and the projections that
-turn a flat frame into a world you can look around in.</p>
-<p><code>CGO_ENABLED=0</code>, no third-party modules, 100% statement coverage, and every
-package testable without a headset attached — which is the point. Sign and
+<p><strong>The geometry an immersive video player and an XR virtual desktop need, as
+pure Go:</strong> orientation, stereo frame packing, the projections that turn a flat
+frame into a world you can look around in, the 360° band screens sit on, and
+the catalogue that says how wide a given headset's view actually is.</p>
+<p><code>CGO_ENABLED=0</code>, one third-party module (HCL, and only for the glasses
+catalogue — see <a href="packages/#glasses"><code>glasses</code></a> for why), 100% statement
+coverage, and every package testable without a headset attached — which is the point. Sign and
 axis-order mistakes are invisible in a still frame and awful to wear, so they
 are pinned by tests against known directions rather than discovered by putting
 the glasses on.</p>
@@ -511,6 +533,14 @@ the glasses on.</p>
 <td><a href="packages/#warp"><code>warp</code></a></td>
 <td>the projection precomputed into a lookup table</td>
 </tr>
+<tr>
+<td><a href="packages/#ribbon"><code>ribbon</code></a></td>
+<td>screens on a 360° band, composited by yaw</td>
+</tr>
+<tr>
+<td><a href="packages/#glasses"><code>glasses</code></a></td>
+<td>which display is the headset, and how wide the view is</td>
+</tr>
 </tbody>
 </table>
 <h2 id="where-to-go-next">Where to go next<a class="headerlink" href="#where-to-go-next" title="Permanent link">&para;</a></h2>
@@ -519,10 +549,14 @@ the glasses on.</p>
   design choices exist to prevent.</li>
 <li><a href="architecture/">Architecture</a> — why the geometry lives in its own module,
   and how <code>go-xrkit/player</code> puts it to use.</li>
+<li><a href="repositories/">Repositories</a> — the four repositories in the org and what
+  each one is for.</li>
 <li><a href="roadmap/">Roadmap</a> — what ships today and what is still missing.</li>
 </ul>
-<p>Source: <a href="https://github.com/go-xrkit/xrkit">github.com/go-xrkit/xrkit</a> · the
-player that consumes it: <a href="https://github.com/go-xrkit/player">github.com/go-xrkit/player</a>.</p>
+<p>Source: <a href="https://github.com/go-xrkit/xrkit">github.com/go-xrkit/xrkit</a> · what
+consumes it: <a href="https://github.com/go-xrkit/player">player</a>,
+<a href="https://github.com/go-xrkit/desk">desk</a> and
+<a href="https://github.com/go-xrkit/android">android</a>.</p>
 
 
 
