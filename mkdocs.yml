@@ -44,7 +44,12 @@ nav:
   - Home: index.md
   - Packages: packages.md
   - Architecture: architecture.md
-  - Repositories: repositories.md
+  - Repositories:
+      - Overview: repositories.md
+      - xrkit — the geometry: repos/xrkit.md
+      - player — immersive video: repos/player.md
+      - desk — the ribbon of screens: repos/desk.md
+      - android — capture and owned displays: repos/android.md
   - Roadmap: roadmap.md
 
 markdown_extensions:
