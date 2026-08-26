@@ -4,10 +4,10 @@ Four repositories with code: the geometry, and the three things built on it.
 
 | Repository | What it is |
 | --- | --- |
-| [`xrkit`](https://github.com/go-xrkit/xrkit) | the geometry — `pose`, `stereo`, `projection`, `warp`, `ribbon`, `glasses`. Every package testable with no headset attached, gated at 100% coverage |
-| [`player`](https://github.com/go-xrkit/player) | `xrplay film.mp4` — 360°, VR180 and 3D films, per eye, full screen on the glasses' own display |
-| [`desk`](https://github.com/go-xrkit/desk) | several computer screens on a 360° ribbon, scrolled from the keyboard |
-| [`android`](https://github.com/go-xrkit/android) | screen capture on Android, as a CGO-free Go binary talking to a small Java host |
+| [`xrkit`](repos/xrkit.md) | the geometry — `pose`, `stereo`, `projection`, `warp`, `ribbon`, `glasses`. Every package testable with no headset attached, gated at 100% coverage |
+| [`player`](repos/player.md) | `xrplay film.mp4` — 360°, VR180 and 3D films, per eye, full screen on the glasses' own display |
+| [`desk`](repos/desk.md) | several computer screens on a 360° ribbon, scrolled from the keyboard |
+| [`android`](repos/android.md) | screen capture on Android, as a CGO-free Go binary talking to a small Java host |
 
 ## How they fit together
 

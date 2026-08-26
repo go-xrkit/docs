@@ -52,7 +52,9 @@ m.ApplySwapRB(src, dst, dstStride, 0, 0)
 - [Architecture](architecture.md) — why the geometry lives in its own module,
   and how `go-xrkit/player` puts it to use.
 - [Repositories](repositories.md) — the four repositories in the org and what
-  each one is for.
+  each one is for, each with its own page: [xrkit](repos/xrkit.md),
+  [player](repos/player.md), [desk](repos/desk.md) and
+  [android](repos/android.md).
 - [Roadmap](roadmap.md) — what ships today and what is still missing.
 
 Source: [github.com/go-xrkit/xrkit](https://github.com/go-xrkit/xrkit) · what
