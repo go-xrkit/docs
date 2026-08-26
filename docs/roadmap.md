@@ -12,9 +12,10 @@ glasses: detects projection/layout from the file, decodes on the GPU via
 eye through `xrkit`, and shows the result full screen on the glasses' own
 display via [go-widgets/window](https://github.com/go-widgets/window).
 
-**`go-xrkit/desk`** — several computer screens on a 360° ribbon inside AR
-glasses, scrolled from the keyboard. Real virtual displays that macOS extends
-the desktop onto, captured and drawn as curved screens.
+**`go-xrkit/desk`** — several computer screens on a flat band inside AR glasses,
+scrolled from the keyboard. Real virtual displays that macOS extends the desktop
+onto — the cursor goes there, you click in them — captured and drawn flat, with
+applications moved onto them by name.
 
 **`go-xrkit/android`** — screen capture on Android as an ordinary
 `CGO_ENABLED=0` Go binary talking to a small Java host over a socket, plus a
