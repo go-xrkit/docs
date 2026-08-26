@@ -1,21 +1,43 @@
-# `desk` — screens on a 360° ribbon
+# `desk` — screens on a band, inside AR glasses
 
 [github.com/go-xrkit/desk](https://github.com/go-xrkit/desk)
 
-Several computer screens, floating on a 360° ribbon inside AR glasses, scrolled
-from the keyboard. Pure Go, `CGO_ENABLED=0`, no vendor SDK.
+Several computer screens on a band inside AR glasses, scrolled from the
+keyboard. Pure Go, `CGO_ENABLED=0`, no vendor SDK.
 
-XR glasses show one screen. This puts a ring of them around you: real virtual
-displays that macOS extends the desktop onto, so ordinary applications run on
-them, captured and drawn as curved screens on a band at eye level.
+XR glasses show one screen. This puts a row of them beside each other: real
+virtual displays that macOS extends the desktop onto, so ordinary applications
+run on them — the cursor goes there, you click in them — captured and drawn flat
+on a band at eye level.
 
-**One screen is one full view.** Each virtual display is created at exactly one
-eye's resolution — the most the glasses can show at once — and is given exactly
-the arc that eye can see. Looking straight at a screen shows it edge to edge, at
-one source pixel per output pixel. For a VITURE Beast in its side-by-side 3D mode
-that is six screens of 1920x1080 at 51.57° each; for a Luma Ultra or an XREAL
-One S, seven of 46.06°. The numbers are not configured — they follow from the
-headset's optics.
+## The screens are flat
+
+They were curved once, wrapped on a cylinder. Worn, that buys nothing: the screen
+you look at straight on is drawn **with a bow in it**, and the bow argues with the
+depth the glasses are already presenting. It also cost a projection — an
+equirectangular panorama and a per-pixel warp, **2.8 ms of a 16.6 ms frame** — to
+produce a picture whose whole purpose is to look like a flat screen.
+
+So the screens are laid side by side on a flat band and the band slides.
+
+**One screen is one full view, in PIXELS.** Each virtual display is created at
+exactly one eye's resolution — the most the glasses can show at once — and drawn
+at **one source pixel per panel pixel**. That is what makes it fill the glasses,
+and it needs the panel's resolution and nothing else.
+
+Which has a consequence worth stating plainly: **the field of view is reported,
+not required.** It used to decide the layout, so a headset nobody had measured
+could not be planned for at all and this refused rather than guess. It decides
+nothing now. `xrdesk` runs on any glasses, including ones the catalogue has never
+heard of, and says so — the model where it knows one, the display's own name
+where it does not, and *"field of view not known"* rather than `0.00°`, because a
+number is a claim.
+
+**As many screens as you want**, too. A curved band had to fit in 360°, which at
+one screen per view was seven of them and no more. Flat, the circle is a fiction:
+the yaw says how far along the band you are, and the band is however long it needs
+to be. Three, six or nine are the usual ones, because those fold into a gallery
+three columns wide with nothing ragged. Six by default.
 
 ## Why the keyboard
 
@@ -49,14 +71,26 @@ ribbon cannot: *where is the one three round the back?* — a screen behind the
 viewer's head, which the band can only reach by turning through all the ones in
 between.
 
-It is worth its own mode only if every screen in it is big enough to
-**recognise**, so the grid shape is derived rather than tabulated. For each
-column count the rows follow, the cell size follows from the view and the gap,
-and each screen is fitted into its cell keeping its aspect ratio; the shape
-chosen is the one covering the most angular area. That is why six 16:9 screens in
-a 16:9 view come out **3x2 rather than 6x1** — a row of six is limited by its
-width to a sixth of the view, while 3x2 is limited by its height to a half. Ties
-go to the shape wasting the fewest cells, then to the one with the fewest rows.
+It is **three columns wide** whenever three columns hold every screen in three
+rows or fewer — which is exactly the three, six and nine a desk is usually built
+from. A fixed width is the point: a screen keeps its COLUMN as others are added,
+so the map you build of where things are survives the desk growing.
+
+| screens | gallery |
+| --- | --- |
+| 3 | 3x1 |
+| 6 | 3x2 |
+| 9 | 3x3 |
+
+Past nine a fixed three columns stops paying — fourteen rows of them is not a
+gallery — and the shape is chosen instead by what leaves the screens biggest: for
+each column count the rows follow, the cell size follows from the view and the
+gap, and each screen keeps its own aspect ratio in its cell. Asking for a width
+that does not fit is a preference and not a refusal: a gallery in the wrong shape
+beats no gallery at all.
+
+A ragged last row is left-aligned. A screen that moves sideways when another one
+is added is a screen you have to look for.
 
 Three properties are deliberate and worth knowing:
 
@@ -77,10 +111,9 @@ other one a turn measured from where the viewer actually is. Pressing `g` again
 puts the yaw, the target, the focus and the mode back exactly as the gallery
 found them.
 
-The gallery must fit inside the **view** — the arc the glasses really show — not
-inside the panorama window, which is wider by a margin. A screen laid out in that
-margin is a screen the viewer cannot see, and seeing them all at once is the
-whole point.
+The gallery is laid out in the **view** — the picture the glasses are actually
+given — because a screen laid out anywhere else is a screen the viewer cannot
+see, and seeing them all at once is the whole point.
 
 ## System-wide shortcuts
 
@@ -142,15 +175,17 @@ without them, not a reason not to run.
 
 | | |
 | --- | --- |
-| [`go-xrkit/xrkit`](xrkit.md) | `glasses` names the headset and derives its field of view; `ribbon` places screens and composites them by yaw; `warp` turns the panorama into two eyes |
+| [`go-xrkit/xrkit`](xrkit.md) | `glasses` names the headset; `ribbon` places the screens and its `Nav` drives the band, the gallery and the promoted screen |
+| [`go-macos/accessibility`](https://github.com/go-macos/accessibility) | moves an application's windows onto a chosen screen |
+| [`go-macos/hotkey`](https://github.com/go-macos/hotkey) | the system-wide shortcuts, through Carbon, with no permission at all |
 | [`go-macos/virtualdisplay`](https://github.com/go-macos/virtualdisplay) | creates the displays macOS extends onto |
 | [`go-macos/screencapture`](https://github.com/go-macos/screencapture) | streams their pixels |
 | [`go-widgets`](https://github.com/go-widgets) | the window, and every pixel of interface |
 
-The renderer never rebuilds its distortion table. Building one costs 56.5 ms and
-there are 16.6 ms in a frame — but on an equirectangular panorama a yaw is
-exactly a horizontal shift, so the yaw is applied where the screens are
-composited into the panorama, where it costs nothing at all.
+There is no distortion table, no panorama and no projection. The screens are
+flat, so the buffer they are composited into IS what the glasses are given: a
+frame is a run-length copy of the band's window, and turning the band moves that
+window along it. The 2.8 ms the warp used to cost is not spent.
 
 ## Platforms
 
@@ -180,8 +215,98 @@ than a standard.
 
 ## What it does not claim
 
-A VITURE Beast was connected over DisplayPort and rendered to. A Luma Ultra was
-**enumerated over USB only**, so its display name and modes are unconfirmed.
-Capture of a whole display on macOS is **not yet proven** — it is blocked on a
-Screen Recording permission that could not be granted on the machine it was built
-on; capture of an application window *is* proven.
+This section says what was CONNECTED, as against what was read off a
+specification sheet. A field of view taken from a data sheet renders everything in
+the wrong place if the data sheet is wrong, and nothing about the picture says so.
+
+| | |
+| --- | --- |
+| **VITURE Beast** | connected over DisplayPort and **rendered to**, six flat screens, with an application moved onto one of them and its position read back |
+| **VITURE Luma Ultra** | rendered to, and its display name is the bare word `VITURE` — a BRAND, which the catalogue holds with no optics at all. The bus supplies the model |
+| **XREAL One S** | **enumerated over USB only** — `3318:043e "XREAL 1S"`, identified by product id, on three ports across two buses. DisplayPort alternate mode never engaged: USB 2.0 alone, no second display at any layer. Its modes and its rendering are unconfirmed |
+
+Capture of a whole display on macOS **is** now proven; it was blocked for a while
+on a Screen Recording permission that could not be granted on the machine it was
+built on.
+
+Not proven: the permission dialogue for the Accessibility grant, and the
+behaviour when that grant is absent — the machine this was built on holds it, so
+the refusal path is written and reviewed but never exercised end to end.
+
+## Putting applications on the screens
+
+A ribbon screen is a **real desktop**. The cursor goes there, you click in it, a
+window moved there stays there. So an application is put on one by moving its
+windows, which on macOS is the Accessibility API's job and needs its grant —
+said plainly rather than silently placing nothing.
+
+It is written in the settings, because while you are wearing the glasses you
+cannot see the monitor you would have to drag a window off:
+
+```hcl
+place "Safari"   { screen = 1 }
+place "Terminal" { screen = 2 }
+```
+
+The name is a fragment, case-insensitively: you write `code`, not `Visual Studio
+Code`. Screens are counted from 1 in the plan's own order, so nobody has to know
+what a `CGDirectDisplayID` is. One application missing does not cost the others —
+a desk of six where one is not running places the other five and says which one it
+did not.
+
+**A window told to fill a panel does not land where it was told.** macOS reserves
+the top of a display for the menu bar and clamps a window out of it, so a window
+sent to a 1920x1200 screen arrives at `1920x1169`, thirty-one points down. The
+allowance for that is 64 points — a menu bar at any scale, and *smaller than half
+a screen*, which is what makes it safe rather than lax: a window within it is
+centred on the screen it was sent to and cannot be centred on a neighbour.
+
+## Settings
+
+HCL, not JSON, for the two reasons anyone gives when asked: it takes **comments**,
+so a file can say *why* a shortcut was moved — the only part worth reading six
+months later — and it has a **schema**, so a typo is a diagnostic naming the line
+rather than a field silently left at its zero value.
+
+It lives beside the glasses catalogue — `~/Library/Application
+Support/go-xrkit/desk.hcl` on macOS, `~/.config/go-xrkit/desk.hcl` on Linux, or
+wherever `$XRDESK_CONFIG` points — and **does not have to exist**.
+
+```hcl
+shortcut "gallery" { keys = "option+command+space" }
+fallback = ["control", "shift", "control+shift"]
+
+ribbon  { screens = 6, immersive = true }
+glasses { model = "VITURE Luma Ultra" }
+```
+
+`option+command+left`, `Option-Command-Left` and `⌥⌘←` are the same combination,
+in any order and any case. A combination with **no modifier** is refused: claimed
+system-wide, a bare key is taken from every application on the machine, including
+whatever you are typing into.
+
+`xrdesk -settings` opens a window for all of it, and it opens **by itself** when
+several headsets are attached and nobody has said which — once. Naming a display
+with `-screen` is the answer for a script; writing a model in the settings is the
+answer for somebody who has already chosen.
+
+### `immersive`
+
+macOS draws a menu bar on **every** display when Spaces are separate, so the
+glasses carry one of their own — thirty points tall on a Beast — at a window level
+above an ordinary window. It therefore lands *on top of* the picture, and the
+desktop being shown in that picture has a menu bar already: two of them was the
+first thing anyone noticed wearing this.
+
+So the picture is put above that bar and the Dock. Measured on this machine:
+
+| | layer |
+| --- | --- |
+| an ordinary window | 0 |
+| the Dock | 20 |
+| the menu bar | 24 |
+| the ribbon | **25** |
+
+The bar on your other screen is untouched — it belongs to a different display.
+Turn `immersive` off if the glasses are your **main** display, where that bar and
+the Dock are the real ones rather than a copy on a screen nobody is looking at.
