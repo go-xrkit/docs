@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#desk-screens-on-a-360-ribbon" class="md-skip">
+        <a href="#desk-screens-on-a-band-inside-ar-glasses" class="md-skip">
           Skip to content
         </a>
       
@@ -480,6 +480,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#the-screens-are-flat" class="md-nav__link">
+    <span class="md-ellipsis">
+      The screens are flat
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#why-the-keyboard" class="md-nav__link">
     <span class="md-ellipsis">
       Why the keyboard
@@ -572,6 +581,39 @@
       What it does not claim
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#putting-applications-on-the-screens" class="md-nav__link">
+    <span class="md-ellipsis">
+      Putting applications on the screens
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Settings
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#immersive" class="md-nav__link">
+    <span class="md-ellipsis">
+      immersive
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -659,6 +701,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#the-screens-are-flat" class="md-nav__link">
+    <span class="md-ellipsis">
+      The screens are flat
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#why-the-keyboard" class="md-nav__link">
     <span class="md-ellipsis">
       Why the keyboard
@@ -754,6 +805,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#putting-applications-on-the-screens" class="md-nav__link">
+    <span class="md-ellipsis">
+      Putting applications on the screens
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Settings
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#immersive" class="md-nav__link">
+    <span class="md-ellipsis">
+      immersive
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -769,20 +853,37 @@
                   
 
 
-<h1 id="desk-screens-on-a-360-ribbon"><code>desk</code> — screens on a 360° ribbon<a class="headerlink" href="#desk-screens-on-a-360-ribbon" title="Permanent link">&para;</a></h1>
+<h1 id="desk-screens-on-a-band-inside-ar-glasses"><code>desk</code> — screens on a band, inside AR glasses<a class="headerlink" href="#desk-screens-on-a-band-inside-ar-glasses" title="Permanent link">&para;</a></h1>
 <p><a href="https://github.com/go-xrkit/desk">github.com/go-xrkit/desk</a></p>
-<p>Several computer screens, floating on a 360° ribbon inside AR glasses, scrolled
-from the keyboard. Pure Go, <code>CGO_ENABLED=0</code>, no vendor SDK.</p>
-<p>XR glasses show one screen. This puts a ring of them around you: real virtual
-displays that macOS extends the desktop onto, so ordinary applications run on
-them, captured and drawn as curved screens on a band at eye level.</p>
-<p><strong>One screen is one full view.</strong> Each virtual display is created at exactly one
-eye's resolution — the most the glasses can show at once — and is given exactly
-the arc that eye can see. Looking straight at a screen shows it edge to edge, at
-one source pixel per output pixel. For a VITURE Beast in its side-by-side 3D mode
-that is six screens of 1920x1080 at 51.57° each; for a Luma Ultra or an XREAL
-One S, seven of 46.06°. The numbers are not configured — they follow from the
-headset's optics.</p>
+<p>Several computer screens on a band inside AR glasses, scrolled from the
+keyboard. Pure Go, <code>CGO_ENABLED=0</code>, no vendor SDK.</p>
+<p>XR glasses show one screen. This puts a row of them beside each other: real
+virtual displays that macOS extends the desktop onto, so ordinary applications
+run on them — the cursor goes there, you click in them — captured and drawn flat
+on a band at eye level.</p>
+<h2 id="the-screens-are-flat">The screens are flat<a class="headerlink" href="#the-screens-are-flat" title="Permanent link">&para;</a></h2>
+<p>They were curved once, wrapped on a cylinder. Worn, that buys nothing: the screen
+you look at straight on is drawn <strong>with a bow in it</strong>, and the bow argues with the
+depth the glasses are already presenting. It also cost a projection — an
+equirectangular panorama and a per-pixel warp, <strong>2.8 ms of a 16.6 ms frame</strong> — to
+produce a picture whose whole purpose is to look like a flat screen.</p>
+<p>So the screens are laid side by side on a flat band and the band slides.</p>
+<p><strong>One screen is one full view, in PIXELS.</strong> Each virtual display is created at
+exactly one eye's resolution — the most the glasses can show at once — and drawn
+at <strong>one source pixel per panel pixel</strong>. That is what makes it fill the glasses,
+and it needs the panel's resolution and nothing else.</p>
+<p>Which has a consequence worth stating plainly: <strong>the field of view is reported,
+not required.</strong> It used to decide the layout, so a headset nobody had measured
+could not be planned for at all and this refused rather than guess. It decides
+nothing now. <code>xrdesk</code> runs on any glasses, including ones the catalogue has never
+heard of, and says so — the model where it knows one, the display's own name
+where it does not, and <em>"field of view not known"</em> rather than <code>0.00°</code>, because a
+number is a claim.</p>
+<p><strong>As many screens as you want</strong>, too. A curved band had to fit in 360°, which at
+one screen per view was seven of them and no more. Flat, the circle is a fiction:
+the yaw says how far along the band you are, and the band is however long it needs
+to be. Three, six or nine are the usual ones, because those fold into a gallery
+three columns wide with nothing ragged. Six by default.</p>
 <h2 id="why-the-keyboard">Why the keyboard<a class="headerlink" href="#why-the-keyboard" title="Permanent link">&para;</a></h2>
 <p>The Beast, the Luma Ultra and the XREAL One series all do their 3DoF anchoring
 <strong>inside the glasses</strong>, which is also why their motion sensors are not offered to
@@ -844,14 +945,40 @@ viewer could not predict.</p>
 ribbon cannot: <em>where is the one three round the back?</em> — a screen behind the
 viewer's head, which the band can only reach by turning through all the ones in
 between.</p>
-<p>It is worth its own mode only if every screen in it is big enough to
-<strong>recognise</strong>, so the grid shape is derived rather than tabulated. For each
-column count the rows follow, the cell size follows from the view and the gap,
-and each screen is fitted into its cell keeping its aspect ratio; the shape
-chosen is the one covering the most angular area. That is why six 16:9 screens in
-a 16:9 view come out <strong>3x2 rather than 6x1</strong> — a row of six is limited by its
-width to a sixth of the view, while 3x2 is limited by its height to a half. Ties
-go to the shape wasting the fewest cells, then to the one with the fewest rows.</p>
+<p>It is <strong>three columns wide</strong> whenever three columns hold every screen in three
+rows or fewer — which is exactly the three, six and nine a desk is usually built
+from. A fixed width is the point: a screen keeps its COLUMN as others are added,
+so the map you build of where things are survives the desk growing.</p>
+<table>
+<thead>
+<tr>
+<th>screens</th>
+<th>gallery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>3x1</td>
+</tr>
+<tr>
+<td>6</td>
+<td>3x2</td>
+</tr>
+<tr>
+<td>9</td>
+<td>3x3</td>
+</tr>
+</tbody>
+</table>
+<p>Past nine a fixed three columns stops paying — fourteen rows of them is not a
+gallery — and the shape is chosen instead by what leaves the screens biggest: for
+each column count the rows follow, the cell size follows from the view and the
+gap, and each screen keeps its own aspect ratio in its cell. Asking for a width
+that does not fit is a preference and not a refusal: a gallery in the wrong shape
+beats no gallery at all.</p>
+<p>A ragged last row is left-aligned. A screen that moves sideways when another one
+is added is a screen you have to look for.</p>
 <p>Three properties are deliberate and worth knowing:</p>
 <ul>
 <li><strong>The grid is rigid.</strong> A ragged last row is left-aligned, not centred.
@@ -870,10 +997,9 @@ choosing the screen you were already looking at cost no motion at all, and any
 other one a turn measured from where the viewer actually is. Pressing <code>g</code> again
 puts the yaw, the target, the focus and the mode back exactly as the gallery
 found them.</p>
-<p>The gallery must fit inside the <strong>view</strong> — the arc the glasses really show — not
-inside the panorama window, which is wider by a margin. A screen laid out in that
-margin is a screen the viewer cannot see, and seeing them all at once is the
-whole point.</p>
+<p>The gallery is laid out in the <strong>view</strong> — the picture the glasses are actually
+given — because a screen laid out anywhere else is a screen the viewer cannot
+see, and seeing them all at once is the whole point.</p>
 <h2 id="system-wide-shortcuts">System-wide shortcuts<a class="headerlink" href="#system-wide-shortcuts" title="Permanent link">&para;</a></h2>
 <p>The point of a desk in glasses is that you are <em>using</em> the screens on it. A
 shortcut that only worked when <code>xrdesk</code> was frontmost would be a shortcut for
@@ -959,7 +1085,15 @@ without them, not a reason not to run.</p>
 <tbody>
 <tr>
 <td><a href="../xrkit/"><code>go-xrkit/xrkit</code></a></td>
-<td><code>glasses</code> names the headset and derives its field of view; <code>ribbon</code> places screens and composites them by yaw; <code>warp</code> turns the panorama into two eyes</td>
+<td><code>glasses</code> names the headset; <code>ribbon</code> places the screens and its <code>Nav</code> drives the band, the gallery and the promoted screen</td>
+</tr>
+<tr>
+<td><a href="https://github.com/go-macos/accessibility"><code>go-macos/accessibility</code></a></td>
+<td>moves an application's windows onto a chosen screen</td>
+</tr>
+<tr>
+<td><a href="https://github.com/go-macos/hotkey"><code>go-macos/hotkey</code></a></td>
+<td>the system-wide shortcuts, through Carbon, with no permission at all</td>
 </tr>
 <tr>
 <td><a href="https://github.com/go-macos/virtualdisplay"><code>go-macos/virtualdisplay</code></a></td>
@@ -975,10 +1109,10 @@ without them, not a reason not to run.</p>
 </tr>
 </tbody>
 </table>
-<p>The renderer never rebuilds its distortion table. Building one costs 56.5 ms and
-there are 16.6 ms in a frame — but on an equirectangular panorama a yaw is
-exactly a horizontal shift, so the yaw is applied where the screens are
-composited into the panorama, where it costs nothing at all.</p>
+<p>There is no distortion table, no panorama and no projection. The screens are
+flat, so the buffer they are composited into IS what the glasses are given: a
+frame is a run-length copy of the band's window, and turning the band moves that
+window along it. The 2.8 ms the warp used to cost is not spent.</p>
 <h2 id="platforms">Platforms<a class="headerlink" href="#platforms" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1025,11 +1159,116 @@ is written instead of the day someone remembers to add it.</p>
 runner has, so a total-coverage figure would be a number chosen to pass rather
 than a standard.</p>
 <h2 id="what-it-does-not-claim">What it does not claim<a class="headerlink" href="#what-it-does-not-claim" title="Permanent link">&para;</a></h2>
-<p>A VITURE Beast was connected over DisplayPort and rendered to. A Luma Ultra was
-<strong>enumerated over USB only</strong>, so its display name and modes are unconfirmed.
-Capture of a whole display on macOS is <strong>not yet proven</strong> — it is blocked on a
-Screen Recording permission that could not be granted on the machine it was built
-on; capture of an application window <em>is</em> proven.</p>
+<p>This section says what was CONNECTED, as against what was read off a
+specification sheet. A field of view taken from a data sheet renders everything in
+the wrong place if the data sheet is wrong, and nothing about the picture says so.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>VITURE Beast</strong></td>
+<td>connected over DisplayPort and <strong>rendered to</strong>, six flat screens, with an application moved onto one of them and its position read back</td>
+</tr>
+<tr>
+<td><strong>VITURE Luma Ultra</strong></td>
+<td>rendered to, and its display name is the bare word <code>VITURE</code> — a BRAND, which the catalogue holds with no optics at all. The bus supplies the model</td>
+</tr>
+<tr>
+<td><strong>XREAL One S</strong></td>
+<td><strong>enumerated over USB only</strong> — <code>3318:043e "XREAL 1S"</code>, identified by product id, on three ports across two buses. DisplayPort alternate mode never engaged: USB 2.0 alone, no second display at any layer. Its modes and its rendering are unconfirmed</td>
+</tr>
+</tbody>
+</table>
+<p>Capture of a whole display on macOS <strong>is</strong> now proven; it was blocked for a while
+on a Screen Recording permission that could not be granted on the machine it was
+built on.</p>
+<p>Not proven: the permission dialogue for the Accessibility grant, and the
+behaviour when that grant is absent — the machine this was built on holds it, so
+the refusal path is written and reviewed but never exercised end to end.</p>
+<h2 id="putting-applications-on-the-screens">Putting applications on the screens<a class="headerlink" href="#putting-applications-on-the-screens" title="Permanent link">&para;</a></h2>
+<p>A ribbon screen is a <strong>real desktop</strong>. The cursor goes there, you click in it, a
+window moved there stays there. So an application is put on one by moving its
+windows, which on macOS is the Accessibility API's job and needs its grant —
+said plainly rather than silently placing nothing.</p>
+<p>It is written in the settings, because while you are wearing the glasses you
+cannot see the monitor you would have to drag a window off:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="err">place</span><span class="w"> </span><span class="s2">"Safari"</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="na">screen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="err">place</span><span class="w"> </span><span class="s2">"Terminal"</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">screen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>The name is a fragment, case-insensitively: you write <code>code</code>, not <code>Visual Studio
+Code</code>. Screens are counted from 1 in the plan's own order, so nobody has to know
+what a <code>CGDirectDisplayID</code> is. One application missing does not cost the others —
+a desk of six where one is not running places the other five and says which one it
+did not.</p>
+<p><strong>A window told to fill a panel does not land where it was told.</strong> macOS reserves
+the top of a display for the menu bar and clamps a window out of it, so a window
+sent to a 1920x1200 screen arrives at <code>1920x1169</code>, thirty-one points down. The
+allowance for that is 64 points — a menu bar at any scale, and <em>smaller than half
+a screen</em>, which is what makes it safe rather than lax: a window within it is
+centred on the screen it was sent to and cannot be centred on a neighbour.</p>
+<h2 id="settings">Settings<a class="headerlink" href="#settings" title="Permanent link">&para;</a></h2>
+<p>HCL, not JSON, for the two reasons anyone gives when asked: it takes <strong>comments</strong>,
+so a file can say <em>why</em> a shortcut was moved — the only part worth reading six
+months later — and it has a <strong>schema</strong>, so a typo is a diagnostic naming the line
+rather than a field silently left at its zero value.</p>
+<p>It lives beside the glasses catalogue — <code>~/Library/Application
+Support/go-xrkit/desk.hcl</code> on macOS, <code>~/.config/go-xrkit/desk.hcl</code> on Linux, or
+wherever <code>$XRDESK_CONFIG</code> points — and <strong>does not have to exist</strong>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="err">shortcut</span><span class="w"> </span><span class="s2">"gallery" { keys = "option+command+space"</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="na">fallback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"control", "shift", "control+shift"</span><span class="p">]</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nb">ribbon</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="na">screens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="na">immersive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">glasses</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"VITURE Luma Ultra"</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p><code>option+command+left</code>, <code>Option-Command-Left</code> and <code>⌥⌘←</code> are the same combination,
+in any order and any case. A combination with <strong>no modifier</strong> is refused: claimed
+system-wide, a bare key is taken from every application on the machine, including
+whatever you are typing into.</p>
+<p><code>xrdesk -settings</code> opens a window for all of it, and it opens <strong>by itself</strong> when
+several headsets are attached and nobody has said which — once. Naming a display
+with <code>-screen</code> is the answer for a script; writing a model in the settings is the
+answer for somebody who has already chosen.</p>
+<h3 id="immersive"><code>immersive</code><a class="headerlink" href="#immersive" title="Permanent link">&para;</a></h3>
+<p>macOS draws a menu bar on <strong>every</strong> display when Spaces are separate, so the
+glasses carry one of their own — thirty points tall on a Beast — at a window level
+above an ordinary window. It therefore lands <em>on top of</em> the picture, and the
+desktop being shown in that picture has a menu bar already: two of them was the
+first thing anyone noticed wearing this.</p>
+<p>So the picture is put above that bar and the Dock. Measured on this machine:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>layer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>an ordinary window</td>
+<td>0</td>
+</tr>
+<tr>
+<td>the Dock</td>
+<td>20</td>
+</tr>
+<tr>
+<td>the menu bar</td>
+<td>24</td>
+</tr>
+<tr>
+<td>the ribbon</td>
+<td><strong>25</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The bar on your other screen is untouched — it belongs to a different display.
+Turn <code>immersive</code> off if the glasses are your <strong>main</strong> display, where that bar and
+the Dock are the real ones rather than a copy on a screen nobody is looking at.</p>
 
 
 
