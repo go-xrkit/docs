@@ -851,9 +851,18 @@ deliberately <strong>not hard-coded anywhere</strong> — it is one emulator's f
 <em>shape</em> of the failure is the finding, and the limit refuses in both directions
 rather than trusting a constant.</p>
 <h2 id="coverage">Coverage<a class="headerlink" href="#coverage" title="Permanent link">&para;</a></h2>
-<p>100% statement coverage, gated in CI, error branches included. The whole test
-suite runs on all six of Go's 64-bit targets, the four non-native ones under
-qemu.</p>
+<p>100% statement coverage, gated in CI, error branches included — 87 functions,
+100.0% under both <code>go1.26.4</code> and <code>go1.27.1</code>. The whole test suite runs on all six
+of Go's 64-bit targets, the four non-native ones under qemu.</p>
+<p>⚠ Both halves of that matter together. The gate is on the TOTAL with no margin,
+and Go 1.27 counts more statements per block than 1.26 — 381 to 399 here on one
+commit — so a toolchain change moves the number under it without a line of code
+changing. It is harmless at exactly 100%: when every statement is covered the
+weights cannot matter. And because the qemu lanes EXECUTE rather than
+cross-compile, <code>arch loong64 (qemu)</code> is a real witness for golang/go#81000,
+whose backport is still open — it passes under 1.27.1 here, where the same lane
+fails in go-gfx/gfx. A code-generation defect is established by LANE, never by
+repository.</p>
 <h2 id="what-it-does-not-claim">What it does not claim<a class="headerlink" href="#what-it-does-not-claim" title="Permanent link">&para;</a></h2>
 <p><strong>No XR glasses were ever attached to an Android device for any of this.</strong>
 Everything was measured on an arm64 Android 15 (API 35) emulator, and the
