@@ -564,6 +564,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#one-screen-wider-than-the-glasses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One screen wider than the glasses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="One screen wider than the glasses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-curve-is-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The curve is virtual
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pushing-it-back-moves-both-axes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pushing it back moves both axes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#why-the-keyboard" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -827,6 +866,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#one-screen-wider-than-the-glasses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One screen wider than the glasses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="One screen wider than the glasses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-curve-is-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The curve is virtual
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pushing-it-back-moves-both-axes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pushing it back moves both axes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#why-the-keyboard" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1013,6 +1091,11 @@ depth the glasses are already presenting. It also cost a projection — an
 equirectangular panorama and a per-pixel warp, <strong>2.8 ms of a 16.6 ms frame</strong> — to
 produce a picture whose whole purpose is to look like a flat screen.</p>
 <p>So the screens are laid side by side on a flat band and the band slides.</p>
+<p>⚠ <strong>The BAND is flat; the screens can turn.</strong> A plan carries a splay and a bend,
+and a positive splay builds a renderer of turned facets instead. What never came
+back is the WARP: no equirectangular panorama, no per-pixel distortion table. And
+the flat band won the sharpness argument again on 2026-10-04 — see the wide
+screens below.</p>
 <p><strong>One screen is one full view, in PIXELS.</strong> Each virtual display is created at
 exactly one eye's resolution — the most the glasses can show at once — and drawn
 at <strong>one source pixel per panel pixel</strong>. That is what makes it fill the glasses,
@@ -1024,11 +1107,93 @@ nothing now. <code>xrdesk</code> runs on any glasses, including ones the catalog
 heard of, and says so — the model where it knows one, the display's own name
 where it does not, and <em>"field of view not known"</em> rather than <code>0.00°</code>, because a
 number is a claim.</p>
-<p><strong>As many screens as you want</strong>, too. A curved band had to fit in 360°, which at
-one screen per view was seven of them and no more. Flat, the circle is a fiction:
-the yaw says how far along the band you are, and the band is however long it needs
-to be. Three, six or nine are the usual ones, because those fold into a gallery
-three columns wide with nothing ragged. Six by default.</p>
+<p><strong>How many screens is a choice, and it stops at nine.</strong> A curved band had to fit
+in 360°, which at one screen per view was seven of them and no more. Flat, the
+circle is a fiction: the yaw says how far along the band you are, and the band is
+however long it needs to be — the plan would spread forty over the turn without
+complaint.</p>
+<p>So the limit is <em>decided</em>, at <code>desk.MaxScreens</code> = <strong>9</strong>, where three things
+agree: the gallery is three columns wide, so nine fills three rows of three
+exactly and every screen keeps its column as the desk grows; each screen costs a
+display to create and a stream to capture; and there are nine digits for the jump
+keys and none spare. Three, six or nine are the usual ones. Six by default.</p>
+<h2 id="one-screen-wider-than-the-glasses">One screen wider than the glasses<a class="headerlink" href="#one-screen-wider-than-the-glasses" title="Permanent link">&para;</a></h2>
+<p>A spreadsheet does not fit a screen the size of one eye's view. <code>-wide 6400</code>
+makes every screen on the band that wide — three and a third views — and you
+reach the rest of it by <strong>turning your head</strong>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>xrdesk -wide 6400 -screens 3 -reach 15
+</code></pre></div>
+<p><strong>The band stays flat, and that is the point.</strong> The screens are drawn two ways:
+the <em>strip</em> slides a flat band in row copies, the <em>fan</em> projects turned facets
+one destination column at a time, and a projection resamples. Measured, source
+columns per destination column in the middle third of the view, three screens of
+6400 at a reach of 15°:</p>
+<table>
+<thead>
+<tr>
+<th>head turned</th>
+<th>flat band</th>
+<th>bent band</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0°</td>
+<td>1.000</td>
+<td>1.000</td>
+</tr>
+<tr>
+<td>5°</td>
+<td>1.000</td>
+<td>1.019 (0.000 … 2.000)</td>
+</tr>
+<tr>
+<td>10°</td>
+<td>1.000</td>
+<td>1.073</td>
+</tr>
+<tr>
+<td><strong>15°</strong></td>
+<td><strong>1.000</strong></td>
+<td><strong>1.167</strong> (0.000 … 2.000)</td>
+</tr>
+<tr>
+<td>20°</td>
+<td>1.000</td>
+<td>1.073</td>
+</tr>
+<tr>
+<td>30°</td>
+<td>1.000</td>
+<td>1.000</td>
+</tr>
+</tbody>
+</table>
+<p>A rate of 0 is a source column drawn twice; a rate of 2 is one never drawn at
+all. <strong>At rest the two are identical</strong> — which is why it took wearing to find,
+and why the test that keeps it honest turns the head rather than rendering one
+frame. So a wide desk takes the flat band unless you ask for something else.</p>
+<h3 id="the-curve-is-virtual">The curve is virtual<a class="headerlink" href="#the-curve-is-virtual" title="Permanent link">&para;</a></h3>
+<p>A flat screen of 6400 was unusable at its edges before this: a flat plane keeps
+its edges further from the eye than its middle, and a rectilinear projection
+draws them smaller for it — <strong>28%</strong> of the middle's scale at the edge of a 6400
+screen, against <strong>81%</strong> at the edge of one that is a single view wide. Bending
+the screen was the first remedy, and it is the one that cost the sharpness above.</p>
+<p>The second remedy is to make the HEAD go further. <code>-reach</code> is the radius of a
+curve that is never drawn: turn your head twenty degrees and the band moves as
+though you had turned across a screen on a cylinder of that radius, so the part
+in front of you is always square on, always at one source pixel per output pixel,
+and nothing is lost to a fold. <code>desk.MinReachDeg</code> = 5 is the floor — five degrees
+on the widest screen the band allows is already a gain of twelve, and below that
+a head that twitches throws the picture across the band.</p>
+<p>It is amplified by what the screen demands: <code>desk.ComfortableYawDeg</code> = 20 is the
+turn a person makes without thinking, and a screen needing more than that gets
+the difference as gain rather than asking for a bigger turn.</p>
+<h3 id="pushing-it-back-moves-both-axes">Pushing it back moves both axes<a class="headerlink" href="#pushing-it-back-moves-both-axes" title="Permanent link">&para;</a></h3>
+<p><code>⌃⌥⌘-</code> and <code>⌃⌥⌘=</code> move the band away and back, between <code>desk.MinDistance</code> = 1
+and <code>desk.MaxDistance</code> = 4 screens across the view. A distance scales the band in
+<strong>both</strong> axes — it used to scale only its length, which made a pushed-back screen
+half as wide and full height, and that is a squash rather than a distance.</p>
 <h2 id="why-the-keyboard">Why the keyboard<a class="headerlink" href="#why-the-keyboard" title="Permanent link">&para;</a></h2>
 <p>The Beast, the Luma Ultra and the XREAL One series all do their 3DoF anchoring
 <strong>inside the glasses</strong>, which is also why their motion sensors are not offered to
@@ -1149,8 +1314,10 @@ see, and seeing them all at once is the whole point.</p>
 <p>The point of a desk in glasses is that you are <em>using</em> the screens on it. A
 shortcut that only worked when <code>xrdesk</code> was frontmost would be a shortcut for
 nothing: the viewer is reading inside one of the screens and wants the next one,
-without first clicking on a window they cannot see. So three of the keys are
-claimed <strong>system-wide</strong> and work while another application has the keyboard:</p>
+without first clicking on a window they cannot see. So <strong>forty</strong> of them are
+claimed system-wide and work while another application has the keyboard — the
+desk's own window is deliberately passive and never takes the keyboard from what
+is running on the screens.</p>
 <table>
 <thead>
 <tr>
@@ -1160,27 +1327,103 @@ claimed <strong>system-wide</strong> and work while another application has the 
 </thead>
 <tbody>
 <tr>
-<td><code>⌥⌘←</code> <code>⌥⌘→</code></td>
+<td><code>⌃⌥⌘1</code>…<code>⌃⌥⌘9</code></td>
+<td>straight to that screen</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘0</code></td>
+<td>fit: one screen, the largest these glasses can show it</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘←</code> <code>⌃⌥⌘→</code></td>
 <td>turn the band</td>
 </tr>
 <tr>
-<td><code>⌥⌘Space</code></td>
-<td>show every screen at once</td>
+<td><code>⌃⌥⌘-</code> <code>⌃⌥⌘=</code></td>
+<td>move the band away, and back</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘F3</code></td>
+<td>show the SCREENS</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘F4</code></td>
+<td>show what is RUNNING on them</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘↩</code></td>
+<td>choose</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘F</code></td>
+<td>follow your head</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘C</code></td>
+<td>what this screen shows</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘X</code></td>
+<td>one application per screen</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘[</code> <code>⌃⌥⌘]</code></td>
+<td>flatten the screens, turn them</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘M</code> <code>⌃⌥⌘H</code></td>
+<td>the pointer here, and back to this Mac</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘D</code></td>
+<td>3D on or off</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘P</code> <code>⌃⌥⌘L</code></td>
+<td>a picture of the view, a photograph of the room</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘F1</code>…<code>⌃⌥⌘F12</code></td>
+<td>the glasses themselves: brightness, volume, the room, down</td>
+</tr>
+<tr>
+<td><code>⌃⌥⌘S</code> <code>⌃⌥⌘⎋</code></td>
+<td>the settings, and quit</td>
 </tr>
 </tbody>
 </table>
-<p>This goes through <a href="https://github.com/go-macos/hotkey"><code>go-macos/hotkey</code></a> v0.1.0,
-which uses Carbon's <code>RegisterEventHotKey</code>. That matters for one reason:
-<strong>it asks for no permission at all</strong> — no Accessibility prompt, no input
-monitoring, no trip to System Settings. The two obvious alternative routes both
-demand the Accessibility (TCC) grant. Registering <code>⌥⌘←</code> on macOS 26.6.2 produced
-no dialog.</p>
+<p>The desk's README carries the full table, and a test there reads it and refuses a
+row the code does not grant — that table had four wrong rows and sixteen missing
+before the test existed.</p>
+<p>⚠ <strong>One prefix for all of them.</strong> The band was on <code>⌥⌘←</code>/<code>⌥⌘→</code> once; somebody who
+had learnt the desk pressed <code>⌃⌥⌘←</code> and got nothing, and one prefix everywhere
+beat two keys saved.</p>
+<p>⚠ <strong>And the galleries are on function keys</strong>, which took three tries. <code>⌃⌥⌘A</code> was
+granted without complaint and never delivered a single press — an application's
+own menu key is invisible to every check there is. The arrows were next, and they
+are the pair a settings file most often wants for the distance. A function key
+collides with neither. <code>Space</code> is bound to nothing at all.</p>
+<p>This goes through <a href="https://github.com/go-macos/hotkey"><code>go-macos/hotkey</code></a>, which
+uses Carbon's <code>RegisterEventHotKey</code>. That matters for one reason: <strong>it asks for
+no permission at all</strong> — no Accessibility prompt, no input monitoring, no trip to
+System Settings. The two obvious alternative routes both demand the Accessibility
+(TCC) grant.</p>
 <p><code>-no-global</code> declines the whole thing.</p>
 <h3 id="they-are-not-always-the-keys-you-get">They are not always the keys you get<a class="headerlink" href="#they-are-not-always-the-keys-you-get" title="Permanent link">&para;</a></h3>
-<p><code>⌥⌘Space</code> is the Finder's search window on a stock macOS. So each shortcut goes
-through a <strong>fallback ladder</strong> — the wanted combination first, then the same
-combination with Shift added, then with Control, then with both. On the machine
-this was built on the gallery ends up on <code>⌥⇧⌘Space</code>.</p>
+<p>Three things move a shortcut, and a session <strong>prints what it landed on</strong>.</p>
+<p><strong>You moved it.</strong> Every one of them can be re-bound from <code>desk.hcl</code>, except quit
+— the way out of a desk that covers a display, which somebody wearing glasses
+cannot reach through a menu bar.</p>
+<p><strong>Something else holds it.</strong> The shortcut then climbs a ladder of MODIFIERS —
+<code>⇧⌥⌘</code>, then <code>⌃⇧⌥⌘</code> — keeping the key and changing what is held with it. A whole
+GESTURE lands on one rung or none: pushing the band away and bringing it back are
+one idea, and granting them on different modifiers reads as a broken application.
+Measured — <code>⌃⌥⌘↑</code> pushed the band away sixteen times in one session while
+<code>closer</code> sat alone on <code>⌃⌥⇧⌘↓</code> and never fired once.</p>
+<p><strong>The key is elsewhere on your keyboard.</strong> A claim is made for the key whose
+LEGEND matches, not for the ANSI position, so <code>⌃⌥⌘=</code> is the key printing <code>=</code> on
+an AZERTY keyboard. The start-up line names both when they differ:
+<code>fit: ⌃⌥⌘= (asked for ⌃⌥⌘-, it was taken)</code>.</p>
 <p>Whatever it lands on is <strong>printed at start-up</strong>, and that is not politeness — it
 is required, because of the three ways a shortcut can already be taken, only two
 are detectable:</p>
@@ -1207,8 +1450,9 @@ are detectable:</p>
 </tbody>
 </table>
 <p>That third row is why the claimed combination is shown rather than merely logged.
-<code>⌥⌘←</code>/<code>⌥⌘→</code> register without complaint and are <em>also</em> Safari's tab navigation:
-while <code>xrdesk</code> runs it wins them and Safari quietly stops seeing them. That is
+It is also the row that moved the galleries twice: <code>⌃⌥⌘A</code> was granted and never
+delivered. And the band keys are <em>also</em> Safari's tab navigation — while <code>xrdesk</code>
+runs it wins them and Safari quietly stops seeing them. That is
 the trade a global shortcut is, and it is printed rather than hidden.</p>
 <p>A held key is <strong>dropped rather than queued</strong>. Presses arrive faster than a ribbon
 can turn, and a queue of them would keep turning it long after the finger came
@@ -1342,8 +1586,8 @@ windows, which on macOS is the Accessibility API's job and needs its grant —
 said plainly rather than silently placing nothing.</p>
 <p>It is written in the settings, because while you are wearing the glasses you
 cannot see the monitor you would have to drag a window off:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="err">place</span><span class="w"> </span><span class="s2">"Safari"</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="na">screen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">}</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="err">place</span><span class="w"> </span><span class="s2">"Terminal"</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">screen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="err">place</span><span class="w"> </span><span class="s2">"Safari"</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="na">screen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="err">place</span><span class="w"> </span><span class="s2">"Terminal"</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">screen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
 <p>The name is a fragment, case-insensitively: you write <code>code</code>, not <code>Visual Studio
 Code</code>. Screens are counted from 1 in the plan's own order, so nobody has to know
@@ -1364,11 +1608,11 @@ rather than a field silently left at its zero value.</p>
 <p>It lives beside the glasses catalogue — <code>~/Library/Application
 Support/go-xrkit/desk.hcl</code> on macOS, <code>~/.config/go-xrkit/desk.hcl</code> on Linux, or
 wherever <code>$XRDESK_CONFIG</code> points — and <strong>does not have to exist</strong>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="err">shortcut</span><span class="w"> </span><span class="s2">"gallery" { keys = "option+command+space"</span><span class="w"> </span><span class="p">}</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="na">fallback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"control", "shift", "control+shift"</span><span class="p">]</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nb">ribbon</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="na">screens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="na">immersive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="w"> </span><span class="p">}</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">glasses</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"VITURE Luma Ultra"</span><span class="w"> </span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="err">shortcut</span><span class="w"> </span><span class="s2">"gallery" { keys = "option+command+space"</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="na">fallback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"control", "shift", "control+shift"</span><span class="p">]</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nb">ribbon</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="na">screens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="na">immersive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">glasses</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"VITURE Luma Ultra"</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
 <p><code>option+command+left</code>, <code>Option-Command-Left</code> and <code>⌥⌘←</code> are the same combination,
 in any order and any case. A combination with <strong>no modifier</strong> is refused: claimed
