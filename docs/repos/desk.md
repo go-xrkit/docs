@@ -20,6 +20,12 @@ produce a picture whose whole purpose is to look like a flat screen.
 
 So the screens are laid side by side on a flat band and the band slides.
 
+⚠ **The BAND is flat; the screens can turn.** A plan carries a splay and a bend,
+and a positive splay builds a renderer of turned facets instead. What never came
+back is the WARP: no equirectangular panorama, no per-pixel distortion table. And
+the flat band won the sharpness argument again on 2026-10-04 — see the wide
+screens below.
+
 **One screen is one full view, in PIXELS.** Each virtual display is created at
 exactly one eye's resolution — the most the glasses can show at once — and drawn
 at **one source pixel per panel pixel**. That is what makes it fill the glasses,
@@ -33,11 +39,74 @@ heard of, and says so — the model where it knows one, the display's own name
 where it does not, and *"field of view not known"* rather than `0.00°`, because a
 number is a claim.
 
-**As many screens as you want**, too. A curved band had to fit in 360°, which at
-one screen per view was seven of them and no more. Flat, the circle is a fiction:
-the yaw says how far along the band you are, and the band is however long it needs
-to be. Three, six or nine are the usual ones, because those fold into a gallery
-three columns wide with nothing ragged. Six by default.
+**How many screens is a choice, and it stops at nine.** A curved band had to fit
+in 360°, which at one screen per view was seven of them and no more. Flat, the
+circle is a fiction: the yaw says how far along the band you are, and the band is
+however long it needs to be — the plan would spread forty over the turn without
+complaint.
+
+So the limit is *decided*, at `desk.MaxScreens` = **9**, where three things
+agree: the gallery is three columns wide, so nine fills three rows of three
+exactly and every screen keeps its column as the desk grows; each screen costs a
+display to create and a stream to capture; and there are nine digits for the jump
+keys and none spare. Three, six or nine are the usual ones. Six by default.
+
+## One screen wider than the glasses
+
+A spreadsheet does not fit a screen the size of one eye's view. `-wide 6400`
+makes every screen on the band that wide — three and a third views — and you
+reach the rest of it by **turning your head**.
+
+```
+xrdesk -wide 6400 -screens 3 -reach 15
+```
+
+**The band stays flat, and that is the point.** The screens are drawn two ways:
+the *strip* slides a flat band in row copies, the *fan* projects turned facets
+one destination column at a time, and a projection resamples. Measured, source
+columns per destination column in the middle third of the view, three screens of
+6400 at a reach of 15°:
+
+| head turned | flat band | bent band |
+| --- | --- | --- |
+| 0° | 1.000 | 1.000 |
+| 5° | 1.000 | 1.019 (0.000 … 2.000) |
+| 10° | 1.000 | 1.073 |
+| **15°** | **1.000** | **1.167** (0.000 … 2.000) |
+| 20° | 1.000 | 1.073 |
+| 30° | 1.000 | 1.000 |
+
+A rate of 0 is a source column drawn twice; a rate of 2 is one never drawn at
+all. **At rest the two are identical** — which is why it took wearing to find,
+and why the test that keeps it honest turns the head rather than rendering one
+frame. So a wide desk takes the flat band unless you ask for something else.
+
+### The curve is virtual
+
+A flat screen of 6400 was unusable at its edges before this: a flat plane keeps
+its edges further from the eye than its middle, and a rectilinear projection
+draws them smaller for it — **28%** of the middle's scale at the edge of a 6400
+screen, against **81%** at the edge of one that is a single view wide. Bending
+the screen was the first remedy, and it is the one that cost the sharpness above.
+
+The second remedy is to make the HEAD go further. `-reach` is the radius of a
+curve that is never drawn: turn your head twenty degrees and the band moves as
+though you had turned across a screen on a cylinder of that radius, so the part
+in front of you is always square on, always at one source pixel per output pixel,
+and nothing is lost to a fold. `desk.MinReachDeg` = 5 is the floor — five degrees
+on the widest screen the band allows is already a gain of twelve, and below that
+a head that twitches throws the picture across the band.
+
+It is amplified by what the screen demands: `desk.ComfortableYawDeg` = 20 is the
+turn a person makes without thinking, and a screen needing more than that gets
+the difference as gain rather than asking for a bigger turn.
+
+### Pushing it back moves both axes
+
+`⌃⌥⌘-` and `⌃⌥⌘=` move the band away and back, between `desk.MinDistance` = 1
+and `desk.MaxDistance` = 4 screens across the view. A distance scales the band in
+**both** axes — it used to scale only its length, which made a pushed-back screen
+half as wide and full height, and that is a squash rather than a distance.
 
 ## Why the keyboard
 
@@ -120,29 +189,71 @@ see, and seeing them all at once is the whole point.
 The point of a desk in glasses is that you are *using* the screens on it. A
 shortcut that only worked when `xrdesk` was frontmost would be a shortcut for
 nothing: the viewer is reading inside one of the screens and wants the next one,
-without first clicking on a window they cannot see. So three of the keys are
-claimed **system-wide** and work while another application has the keyboard:
+without first clicking on a window they cannot see. So **forty** of them are
+claimed system-wide and work while another application has the keyboard — the
+desk's own window is deliberately passive and never takes the keyboard from what
+is running on the screens.
 
 | | |
 | --- | --- |
-| `⌥⌘←` `⌥⌘→` | turn the band |
-| `⌥⌘Space` | show every screen at once |
+| `⌃⌥⌘1`…`⌃⌥⌘9` | straight to that screen |
+| `⌃⌥⌘0` | fit: one screen, the largest these glasses can show it |
+| `⌃⌥⌘←` `⌃⌥⌘→` | turn the band |
+| `⌃⌥⌘-` `⌃⌥⌘=` | move the band away, and back |
+| `⌃⌥⌘F3` | show the SCREENS |
+| `⌃⌥⌘F4` | show what is RUNNING on them |
+| `⌃⌥⌘↩` | choose |
+| `⌃⌥⌘F` | follow your head |
+| `⌃⌥⌘C` | what this screen shows |
+| `⌃⌥⌘X` | one application per screen |
+| `⌃⌥⌘[` `⌃⌥⌘]` | flatten the screens, turn them |
+| `⌃⌥⌘M` `⌃⌥⌘H` | the pointer here, and back to this Mac |
+| `⌃⌥⌘D` | 3D on or off |
+| `⌃⌥⌘P` `⌃⌥⌘L` | a picture of the view, a photograph of the room |
+| `⌃⌥⌘F1`…`⌃⌥⌘F12` | the glasses themselves: brightness, volume, the room, down |
+| `⌃⌥⌘S` `⌃⌥⌘⎋` | the settings, and quit |
 
-This goes through [`go-macos/hotkey`](https://github.com/go-macos/hotkey) v0.1.0,
-which uses Carbon's `RegisterEventHotKey`. That matters for one reason:
-**it asks for no permission at all** — no Accessibility prompt, no input
-monitoring, no trip to System Settings. The two obvious alternative routes both
-demand the Accessibility (TCC) grant. Registering `⌥⌘←` on macOS 26.6.2 produced
-no dialog.
+The desk's README carries the full table, and a test there reads it and refuses a
+row the code does not grant — that table had four wrong rows and sixteen missing
+before the test existed.
+
+⚠ **One prefix for all of them.** The band was on `⌥⌘←`/`⌥⌘→` once; somebody who
+had learnt the desk pressed `⌃⌥⌘←` and got nothing, and one prefix everywhere
+beat two keys saved.
+
+⚠ **And the galleries are on function keys**, which took three tries. `⌃⌥⌘A` was
+granted without complaint and never delivered a single press — an application's
+own menu key is invisible to every check there is. The arrows were next, and they
+are the pair a settings file most often wants for the distance. A function key
+collides with neither. `Space` is bound to nothing at all.
+
+This goes through [`go-macos/hotkey`](https://github.com/go-macos/hotkey), which
+uses Carbon's `RegisterEventHotKey`. That matters for one reason: **it asks for
+no permission at all** — no Accessibility prompt, no input monitoring, no trip to
+System Settings. The two obvious alternative routes both demand the Accessibility
+(TCC) grant.
 
 `-no-global` declines the whole thing.
 
 ### They are not always the keys you get
 
-`⌥⌘Space` is the Finder's search window on a stock macOS. So each shortcut goes
-through a **fallback ladder** — the wanted combination first, then the same
-combination with Shift added, then with Control, then with both. On the machine
-this was built on the gallery ends up on `⌥⇧⌘Space`.
+Three things move a shortcut, and a session **prints what it landed on**.
+
+**You moved it.** Every one of them can be re-bound from `desk.hcl`, except quit
+— the way out of a desk that covers a display, which somebody wearing glasses
+cannot reach through a menu bar.
+
+**Something else holds it.** The shortcut then climbs a ladder of MODIFIERS —
+`⇧⌥⌘`, then `⌃⇧⌥⌘` — keeping the key and changing what is held with it. A whole
+GESTURE lands on one rung or none: pushing the band away and bringing it back are
+one idea, and granting them on different modifiers reads as a broken application.
+Measured — `⌃⌥⌘↑` pushed the band away sixteen times in one session while
+`closer` sat alone on `⌃⌥⇧⌘↓` and never fired once.
+
+**The key is elsewhere on your keyboard.** A claim is made for the key whose
+LEGEND matches, not for the ANSI position, so `⌃⌥⌘=` is the key printing `=` on
+an AZERTY keyboard. The start-up line names both when they differ:
+`fit: ⌃⌥⌘= (asked for ⌃⌥⌘-, it was taken)`.
 
 Whatever it lands on is **printed at start-up**, and that is not politeness — it
 is required, because of the three ways a shortcut can already be taken, only two
@@ -155,8 +266,9 @@ are detectable:
 | An application's own menu key | **no** — invisible to everything |
 
 That third row is why the claimed combination is shown rather than merely logged.
-`⌥⌘←`/`⌥⌘→` register without complaint and are *also* Safari's tab navigation:
-while `xrdesk` runs it wins them and Safari quietly stops seeing them. That is
+It is also the row that moved the galleries twice: `⌃⌥⌘A` was granted and never
+delivered. And the band keys are *also* Safari's tab navigation — while `xrdesk`
+runs it wins them and Safari quietly stops seeing them. That is
 the trade a global shortcut is, and it is printed rather than hidden.
 
 A held key is **dropped rather than queued**. Presses arrive faster than a ribbon
