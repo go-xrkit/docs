@@ -321,6 +321,15 @@ are held at **100% statement coverage, gated in CI**. The gate selects files by
 not a command and not a `_display.go` — so a new portable file is gated the day it
 is written instead of the day someone remembers to add it.
 
+⚠ **A coverage figure is only as good as the toolchain that counted it.** Go
+1.27 splits basic blocks more finely than 1.26 — it breaks a block before an
+instruction that can panic, where 1.26 folded those in and counted them covered
+on the strength of a later line. The same code therefore reads differently, and
+**not always lower**: measured on one commit of `desk`, **82.0% under go1.26.6
+and 82.3% under go1.27.1**, with the gated files at 100% under both. The CI pins
+`go-version: '1.27.1'` and `go.mod` asks for the same patch, so a figure
+measured locally is one the gate agrees with.
+
 Playback needs a display, a video file and a pair of glasses, none of which a
 runner has, so a total-coverage figure would be a number chosen to pass rather
 than a standard.
