@@ -72,9 +72,19 @@ rather than trusting a constant.
 
 ## Coverage
 
-100% statement coverage, gated in CI, error branches included. The whole test
-suite runs on all six of Go's 64-bit targets, the four non-native ones under
-qemu.
+100% statement coverage, gated in CI, error branches included — 87 functions,
+100.0% under both `go1.26.4` and `go1.27.1`. The whole test suite runs on all six
+of Go's 64-bit targets, the four non-native ones under qemu.
+
+⚠ Both halves of that matter together. The gate is on the TOTAL with no margin,
+and Go 1.27 counts more statements per block than 1.26 — 381 to 399 here on one
+commit — so a toolchain change moves the number under it without a line of code
+changing. It is harmless at exactly 100%: when every statement is covered the
+weights cannot matter. And because the qemu lanes EXECUTE rather than
+cross-compile, `arch loong64 (qemu)` is a real witness for golang/go#81000,
+whose backport is still open — it passes under 1.27.1 here, where the same lane
+fails in go-gfx/gfx. A code-generation defect is established by LANE, never by
+repository.
 
 ## What it does not claim
 
