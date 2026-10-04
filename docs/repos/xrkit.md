@@ -7,7 +7,12 @@ nothing else: orientation, how a frame packs two eyes, the projections that turn
 a flat frame into a world you can look around in, the band screens sit on, and a
 catalogue of what a given headset can actually show.
 
-`CGO_ENABLED=0`. **100% statement coverage**, gated in CI. The geometry packages
+`CGO_ENABLED=0`. **100% statement coverage**, gated in CI — 171 functions,
+100.0% under both `go1.26.4` and `go1.27.1`. The toolchain belongs beside the
+figure: Go 1.27 counts more statements per block than 1.26, so the same code can
+read differently under the two compilers. A gate on the TOTAL is the exposed
+shape; this one survives because everything is covered, and when every statement
+is covered the weights cannot matter. The geometry packages
 have no dependencies at all; `glasses` uses HCL so a person can add their own
 hardware without a rebuild.
 
