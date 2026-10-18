@@ -20,7 +20,7 @@ import (
     "github.com/go-xrkit/xrkit/warp"
 )
 
-// Fixed orientation (no head tracking yet) → precompute the warp once.
+// Fixed orientation (this path feeds no yaw in yet) → precompute the warp once.
 q := pose.Identity()
 vp := projection.Viewport{Width: 1920, Height: 1080, FOVyDeg: 90}
 f := stereo.Format{Layout: stereo.SideBySide}

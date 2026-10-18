@@ -33,6 +33,7 @@ Each is described in full on the [Packages](../packages.md) page.
 | [`warp`](../packages.md#warp) | the projection precomputed into a lookup table |
 | [`ribbon`](../packages.md#ribbon) | screens on a 360° band, composited by yaw — and the gallery that shows them all at once |
 | [`glasses`](../packages.md#glasses) | which display is the headset, and how wide the view is |
+| [`headflow`](../packages.md#headflow) | **where the yaw comes from** — recovered from the camera's own frames |
 
 ## Who consumes it
 
