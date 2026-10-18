@@ -421,10 +421,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-there-is-no-head-tracking-yet" class="md-nav__link">
+  <a href="#why-head-tracking-comes-from-the-camera-and-not-the-imu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why there is no head tracking (yet)
+        Why head tracking comes from the CAMERA and not the IMU
       
     </span>
   </a>
@@ -736,10 +736,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-there-is-no-head-tracking-yet" class="md-nav__link">
+  <a href="#why-head-tracking-comes-from-the-camera-and-not-the-imu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why there is no head tracking (yet)
+        Why head tracking comes from the CAMERA and not the IMU
       
     </span>
   </a>
@@ -817,17 +817,29 @@ first and its frame shape second, and records its reasoning rather than
 silently guessing — because a viewer that mis-detects 180° content as 360°
 shows the world squeezed into half the view and gives the user nothing to
 act on.</p>
-<h2 id="why-there-is-no-head-tracking-yet">Why there is no head tracking (yet)<a class="headerlink" href="#why-there-is-no-head-tracking-yet" title="Permanent link">&para;</a></h2>
+<h2 id="why-head-tracking-comes-from-the-camera-and-not-the-imu">Why head tracking comes from the CAMERA and not the IMU<a class="headerlink" href="#why-head-tracking-comes-from-the-camera-and-not-the-imu" title="Permanent link">&para;</a></h2>
 <p>The VITURE Beast's IMU is not reachable over HID: its interfaces open without
 complaint and <code>SetReport</code> reports success, and they emit nothing at all —
 proven against a control run that captured 481 reports from the same reader
 on other devices. See
 <a href="https://github.com/go-macos/iokit">go-macos/iokit</a>.</p>
-<p>That absence is exactly why <code>warp</code> exists as a precomputed table rather than
-a per-frame computation: with a fixed orientation, the sampling is identical
-on every frame, and the measured cost of the two-eye pass (~3 ms at 4K, ~8 ms
-at 8K, against a 16.6 ms budget at 60 Hz) means a GPU warp is not needed until
-head tracking arrives.</p>
+<p>So the orientation comes from the <strong>camera</strong> instead. <code>xrkit</code>'s <code>headflow</code>
+matches column profiles between consecutive frames and recovers <strong>yaw</strong>;
+<code>go-xrkit/android</code> feeds it from the glasses' UVC camera over <code>usbfs</code>. Measured
+live on a Pixel 11 Pro Fold, the tracker costs <strong>790 µs of an 88 ms interval —
+0.9 %</strong> and a worn left-right sweep comes back as <strong>197.9° of travel</strong>. The
+calibration is a <strong>field of view</strong> rather than a column count
+(<code>HorizontalFOV ≈ 72.45°</code>, <code>ColumnsPerDegreeAt(width)</code>), so the same constant
+holds at any capture width.</p>
+<p>⚠ That is <strong>yaw only</strong> — no pitch, no roll — and at ~42 ms a frame it is
+comfortably inside the 107 ms that <code>headflow</code> puts on <em>choosing which screen
+somebody faces</em>, and still outside the under-20 ms wanted for locking an image
+to the head at 1:1.</p>
+<p>That is also why <code>warp</code> is still a precomputed table rather than a per-frame
+computation: with a fixed orientation the sampling is identical on every frame,
+and the measured cost of the two-eye pass (~3 ms at 4K, ~8 ms at 8K, against a
+16.6 ms budget at 60 Hz) means a GPU warp is not needed until the orientation
+updates per frame — which it does not yet do in this path.</p>
 <h2 id="quality-bar">Quality bar<a class="headerlink" href="#quality-bar" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>CGO_ENABLED=0</code></strong> across the org; no XR SDK, no native shims.</li>

@@ -734,7 +734,7 @@
 </tr>
 <tr>
 <td><a href="../repos/android/"><code>android</code></a></td>
-<td>screen capture on Android, as a CGO-free Go binary talking to a small Java host</td>
+<td>screen capture on Android and the glasses' UVC camera over <code>usbfs</code>, as a CGO-free Go binary talking to a small Java host</td>
 </tr>
 </tbody>
 </table>
@@ -788,10 +788,16 @@ measured one.</p>
   unconfirmed. Capture of a whole display on macOS is <strong>not yet proven</strong>: it is
   blocked on a Screen Recording permission that could not be granted on the
   machine it was built on. Capture of an application window <em>is</em> proven.</li>
-<li><strong><code>android</code></strong> — <strong>no XR glasses were attached to an Android device for any of
-  it.</strong> Everything was measured on an arm64 Android 15 emulator. The ceiling of
-  304 displays is one emulator's number and must not be hard-coded anywhere; the
-  <em>shape</em> of the failure is the finding.</li>
+<li><strong><code>android</code></strong> — <strong>glasses have been attached since 2026-10-18, for the camera
+  and head-tracking rows only.</strong> A VITURE Beast on a Pixel 11 Pro Fold: the
+  camera streams through <code>usbfs</code> on an unrooted phone at <strong>23.8 fps with nothing
+  dropped</strong>, and a worn head turn comes back as <strong>197.9° of travel</strong>. Everything
+  else on that page — screen capture, virtual displays, the 304-display ceiling —
+  is still an arm64 Android 15 <strong>emulator's</strong> figure. That ceiling is one
+  emulator's number and must not be hard-coded anywhere; the <em>shape</em> of the
+  failure is the finding. Why MJPEG delivers only 3.21 fps on that camera is
+  <strong>open</strong>, and an earlier claim that the camera truncates its own frames is
+  withdrawn — see <a href="../repos/android/"><code>android</code></a>.</li>
 <li><strong><code>xrkit</code></strong> — the <code>glasses</code> catalogue grades every entry <code>Observed</code>,
   <code>Enumerated</code> or <code>Published</code>, and no macOS display-name artifact has been read
   for any model yet.</li>

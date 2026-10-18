@@ -745,12 +745,21 @@ applications moved onto them by name.</p>
 <p><strong><code>go-xrkit/android</code></strong> — screen capture on Android as an ordinary
 <code>CGO_ENABLED=0</code> Go binary talking to a small Java host over a socket, plus a
 documented account, with transcripts, of the four different ways Android 15
-refuses to let an app create a display it can launch anything onto.</p>
+refuses to let an app create a display it can launch anything onto — <strong>and the
+glasses' UVC camera over <code>usbfs</code> on an unrooted phone</strong>, at 23.8 fps with
+nothing dropped.</p>
 <h2 id="known-limits-today">Known limits, today<a class="headerlink" href="#known-limits-today" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>No head tracking.</strong> The VITURE Beast's IMU is not reachable over HID (see
-  <a href="../architecture/">Architecture</a>); newer generations use USB control
-  transfers instead, which is a separate, unstarted piece of work.</li>
+<li><strong>Head tracking is yaw, from the CAMERA, and not from an IMU.</strong> The VITURE
+  Beast's IMU is still not reachable over HID (see
+  <a href="../architecture/">Architecture</a>), and newer generations use USB control
+  transfers instead, which remains unstarted. What exists instead is
+  <code>xrkit</code>'s <code>headflow</code>: it recovers <strong>yaw</strong> by matching column profiles between
+  camera frames, measured live on a Pixel 11 Pro Fold at <strong>790 µs of an 88 ms
+  interval — 0.9 %</strong>, and a worn left-right sweep comes back as <strong>197.9° of
+  travel</strong>. That is enough to choose which screen somebody faces, which
+  <code>headflow</code> itself puts at 107 ms; it is <strong>not</strong> pitch, not roll, and not the
+  under-20 ms budget for locking an image to the head at 1:1.</li>
 <li><strong>No Matroska.</strong> AVFoundation does not demux MKV or WebM; MP4/MOV/M4V play.</li>
 <li><strong>No seeking, no audio, no loop.</strong> A file plays through once, silently.</li>
 <li><strong>macOS only.</strong> The geometry and display logic in <code>xrkit</code> are portable and

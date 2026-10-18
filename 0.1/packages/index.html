@@ -426,6 +426,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#headflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        headflow
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -779,6 +790,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#headflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        headflow
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -859,7 +881,7 @@ one eye costs a copy rather than a computation.</p>
 </code></pre></div>
 <p>The per-pixel trigonometry in <code>projection</code> is fine to reason about and far too
 slow for four million pixels sixty times a second. But it only depends on the
-viewer's <strong>orientation</strong>, and when that is fixed — no head tracking, a screen
+viewer's <strong>orientation</strong>, and when that is fixed — no yaw fed in, a screen
 anchored in front of the viewer — the answer for every output pixel is the
 same on every frame. So it is computed once into a table of source offsets,
 and each frame becomes a gather. Nearest-neighbour sampling is deliberate: the
@@ -922,6 +944,42 @@ with its provenance attached, and HCL has <em>comments</em>, so what you measure
 next to the number you measured it from. A file that exists and is wrong is an
 error naming the file, the line and the block — a catalogue line that quietly
 does nothing is the same invisible failure as a wrong angle.</p>
+<h2 id="headflow">headflow<a class="headerlink" href="#headflow" title="Permanent link">&para;</a></h2>
+<p><strong>Where the yaw comes from, when the headset will not say.</strong> A VITURE Beast runs
+its own 3DOF tracking and publishes no orientation at all — measured three ways
+on 2026-09-07, none of which produced a number. Its camera, though, is an
+ordinary UVC device, and a turn of the head is plainly visible in it.</p>
+<p>A yaw slides the whole picture sideways together. So each column of a frame is
+summed into one number, that one-dimensional profile is slid against the previous
+frame's until it fits, and the best shift is the turn. No feature detection, no
+model, no state beyond the last profile; under a millisecond on a 1920×1080
+frame, and <strong>790 µs of an 88 ms interval</strong> measured live on a phone.</p>
+<p>⛔⛔ <strong>The calibration is a FIELD OF VIEW, not a number of columns — and it has to
+be.</strong> It was first measured as columns a degree (<code>ColumnsPerDegree</code>, 26.5) on
+1920-wide frames, and columns are a property of the sensor <strong>readout</strong>: the same
+camera read out at 640 puts the same field of view into a third as many of them,
+so the same physical turn slides a third as far. A yaw computed from columns
+alone on a 640-wide frame comes out <strong>three times too small</strong> — no error, no loss
+of confidence, just a plausible wrong number. The stored figure is
+<code>HorizontalFOV</code> (≈ 72.45°, that measurement divided by the width it was taken
+at), and <code>ColumnsPerDegreeAt</code> puts it back into columns for whatever frame
+actually arrives. The defect was dormant while one camera fed one path, and
+became live when <code>android</code> negotiated 640×480 while macOS kept feeding 1920 —
+into the same <code>Tracker</code>.</p>
+<p>What it is good enough for, measured: held on a head and swept back and forth,
+the residual after returning to the start was <strong>1.14 %</strong> of the distance
+travelled; stationary over five minutes and 7474 frames it accumulated
+<strong>exactly nothing</strong>. So <em>which screen is somebody facing</em> — tens of degrees
+apart — is comfortable. Holding a picture locked to the head at 1:1 wants under
+20 ms of latency and is not.</p>
+<p>⛔ <strong>Held at ARM'S LENGTH it is nine times worse</strong> (10.53 % instead of 1.14 %),
+which is worth knowing before testing it that way: an arm moves the camera half
+a metre through the room as well as turning it, near things then slide further
+than far ones, and one best-fit shift is a biased compromise between them. On a
+head the camera turns nearly about its own centre.</p>
+<p>It measures <strong>yaw only</strong>, it is <strong>not a pose</strong> (no position, no gravity, no
+absolute heading), and it needs something to look at — a blank wall offers
+nothing to match, and the confidence says so instead of inventing a number.</p>
 
 
 
