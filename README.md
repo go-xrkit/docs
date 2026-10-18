@@ -2,15 +2,14 @@
 
 Versioned documentation for [go-xrkit](https://github.com/go-xrkit/xrkit), the
 pure-Go geometry an immersive video player needs. Built with
-[MkDocs Material](https://squidfunk.github.io/mkdocs-material/) and versioned
-with [mike](https://github.com/jimporter/mike); published to the `gh-pages`
+[Hugo](https://gohugo.io/) and this fleet's [Hextra fork](https://github.com/tannevaled/hextra) — upstream Hextra plus the opt-in features the fleet's sites use; published to the `gh-pages`
 branch and served at **<https://go-xrkit.github.io/docs/>**.
 
 ## Local preview
 
-```sh
-pip install -r requirements.txt
-mkdocs serve
+```bash
+git submodule update --init --recursive   # themes/hextra, pinned at a release tag
+hugo server                               # http://localhost:1313
 ```
 
 ## Publishing

@@ -1,4 +1,9 @@
-# `xrkit` — the geometry
+---
+title: "xrkit — the geometry"
+weight: 50
+---
+
+# `xrkit` — the geometry {#xrkit-the-geometry}
 
 [github.com/go-xrkit/xrkit](https://github.com/go-xrkit/xrkit)
 
@@ -21,26 +26,26 @@ and axis-order mistakes are invisible in a still frame and awful to wear, so the
 are pinned by tests against known directions rather than discovered by putting
 the glasses on.
 
-## The six packages
+## The six packages {#the-six-packages}
 
-Each is described in full on the [Packages](../packages.md) page.
+Each is described in full on the [Packages]({{< relref "../packages.md" >}}) page.
 
 | Package | Purpose |
 | --- | --- |
-| [`pose`](../packages.md#pose) | quaternions, the Euler convention head trackers report, recentring, smoothing |
-| [`stereo`](../packages.md#stereo) | how a frame packs two eyes — mono, side-by-side, top-bottom |
-| [`projection`](../packages.md#projection) | flat / equirectangular (360×180, VR180 180×180) / equidistant fisheye |
-| [`warp`](../packages.md#warp) | the projection precomputed into a lookup table |
-| [`ribbon`](../packages.md#ribbon) | screens on a 360° band, composited by yaw — and the gallery that shows them all at once |
-| [`glasses`](../packages.md#glasses) | which display is the headset, and how wide the view is |
-| [`headflow`](../packages.md#headflow) | **where the yaw comes from** — recovered from the camera's own frames |
+| [`pose`]({{< relref "../packages.md#pose" >}}) | quaternions, the Euler convention head trackers report, recentring, smoothing |
+| [`stereo`]({{< relref "../packages.md#stereo" >}}) | how a frame packs two eyes — mono, side-by-side, top-bottom |
+| [`projection`]({{< relref "../packages.md#projection" >}}) | flat / equirectangular (360×180, VR180 180×180) / equidistant fisheye |
+| [`warp`]({{< relref "../packages.md#warp" >}}) | the projection precomputed into a lookup table |
+| [`ribbon`]({{< relref "../packages.md#ribbon" >}}) | screens on a 360° band, composited by yaw — and the gallery that shows them all at once |
+| [`glasses`]({{< relref "../packages.md#glasses" >}}) | which display is the headset, and how wide the view is |
+| [`headflow`]({{< relref "../packages.md#headflow" >}}) | **where the yaw comes from** — recovered from the camera's own frames |
 
-## Who consumes it
+## Who consumes it {#who-consumes-it}
 
-[`player`](player.md), [`desk`](desk.md) and [`android`](android.md). `xrkit`
+[`player`]({{< relref "player.md" >}}), [`desk`]({{< relref "desk.md" >}}) and [`android`]({{< relref "android.md" >}}). `xrkit`
 knows about none of them, and knows no operating system at all.
 
-## What it does not claim
+## What it does not claim {#what-it-does-not-claim}
 
 The `glasses` catalogue grades every entry `Observed`, `Enumerated` or
 `Published`, and an entry whose figure cannot be sourced carries none — because a

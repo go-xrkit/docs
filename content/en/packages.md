@@ -1,10 +1,15 @@
-# Packages
+---
+title: "Packages"
+weight: 20
+---
+
+# Packages {#packages}
 
 go-xrkit is a single Go module, `github.com/go-xrkit/xrkit`, split into
 focused packages. Import only what you need; each is usable on its own and
 depends on nothing third-party.
 
-## pose
+## pose {#pose}
 
 Quaternions, the Euler convention head trackers actually report, recentring
 and smoothing.
@@ -28,7 +33,7 @@ horizon swings as the viewer raises their head. This package shipped that bug
 once; every single-axis test passed while it did, because with one non-zero
 angle the order cannot matter.
 
-## stereo
+## stereo {#stereo}
 
 How a frame packs two eyes.
 
@@ -44,7 +49,7 @@ strain rather than as a wrong picture. An odd frame dimension floors the split
 and leaves the middle line unread: losing one column is invisible, a column of
 the wrong eye is not.
 
-## projection
+## projection {#projection}
 
 Direction ↔ picture.
 
@@ -68,7 +73,7 @@ Rays are taken through pixel **centres**. Sampling the corner instead biases
 the whole image by half a pixel: invisible alone, a visible seam where two
 views meet.
 
-## warp
+## warp {#warp}
 
 The projection precomputed into a lookup table, so reshaping a video frame for
 one eye costs a copy rather than a computation.
@@ -96,7 +101,7 @@ projection, source dimensions — and must be rebuilt if any of those change.
 **Measured**, reshaping both eyes at once: **~3 ms at 4K**, **~8 ms at 8K**,
 zero allocations per frame — against a 16.6 ms budget at 60 Hz.
 
-## ribbon
+## ribbon {#ribbon}
 
 Screens on a 360° band: where each one sits, and how they composite into one
 equirectangular panorama by yaw.
@@ -114,7 +119,7 @@ headset's own optics rather than from configuration: each screen gets exactly
 one eye's resolution and exactly the arc that eye can see, so looking straight
 at one shows it edge to edge at one source pixel per output pixel.
 
-## glasses
+## glasses {#glasses}
 
 Which display is the headset, and how wide is the view.
 
@@ -142,7 +147,7 @@ next to the number you measured it from. A file that exists and is wrong is an
 error naming the file, the line and the block — a catalogue line that quietly
 does nothing is the same invisible failure as a wrong angle.
 
-## headflow
+## headflow {#headflow}
 
 **Where the yaw comes from, when the headset will not say.** A VITURE Beast runs
 its own 3DOF tracking and publishes no orientation at all — measured three ways

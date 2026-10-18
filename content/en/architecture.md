@@ -1,6 +1,11 @@
-# Architecture
+---
+title: "Architecture"
+weight: 30
+---
 
-## Why this is its own module
+# Architecture {#architecture}
+
+## Why this is its own module {#why-this-is-its-own-module}
 
 An immersive video player needs orientation math, eye-packing rules and
 projection geometry regardless of what decodes the frame or what draws the
@@ -21,7 +26,7 @@ no glasses, no display required.
                  └───────────────────────────────────────────────┘
 ```
 
-## Boundaries
+## Boundaries {#boundaries}
 
 - **Not a decoder.** Hardware video decode is
   [go-macos/avfoundation](https://github.com/go-macos/avfoundation); `xrkit`
@@ -35,7 +40,7 @@ no glasses, no display required.
   each half; `xrkit/stereo` is the arithmetic on the panel size that decides
   where each half is, not a binding to a headset vendor's runtime.
 
-## How `go-xrkit/player` composes it
+## How `go-xrkit/player` composes it {#how-go-xrkitplayer-composes-it}
 
 `xrplay` joins three things that know nothing about each other:
 `go-macos/avfoundation` for hardware decoding, `go-xrkit/xrkit` for the
@@ -49,7 +54,7 @@ silently guessing — because a viewer that mis-detects 180° content as 360°
 shows the world squeezed into half the view and gives the user nothing to
 act on.
 
-## Why head tracking comes from the CAMERA and not the IMU
+## Why head tracking comes from the CAMERA and not the IMU {#why-head-tracking-comes-from-the-camera-and-not-the-imu}
 
 The VITURE Beast's IMU is not reachable over HID: its interfaces open without
 complaint and `SetReport` reports success, and they emit nothing at all —
@@ -77,7 +82,7 @@ and the measured cost of the two-eye pass (~3 ms at 4K, ~8 ms at 8K, against a
 16.6 ms budget at 60 Hz) means a GPU warp is not needed until the orientation
 updates per frame — which it does not yet do in this path.
 
-## Quality bar
+## Quality bar {#quality-bar}
 
 - **`CGO_ENABLED=0`** across the org; no XR SDK, no native shims.
 - **Zero third-party dependencies** — `xrkit`'s `go.mod` names nothing else.

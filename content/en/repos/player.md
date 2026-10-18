@@ -1,4 +1,9 @@
-# `player` — immersive video on the glasses
+---
+title: "player — immersive video"
+weight: 60
+---
+
+# `player` — immersive video on the glasses {#player-immersive-video-on-the-glasses}
 
 [github.com/go-xrkit/player](https://github.com/go-xrkit/player)
 
@@ -14,11 +19,11 @@ xrplay -for 10s -snapshot out.png f   # stop after 10s, capture what was shown
 
 It joins three things that know nothing about each other:
 [`go-macos/avfoundation`](https://github.com/go-macos/avfoundation) for hardware
-decoding, [`xrkit`](xrkit.md) for the geometry, and
+decoding, [`xrkit`]({{< relref "xrkit.md" >}}) for the geometry, and
 [`go-widgets/window`](https://github.com/go-widgets/window) for a full-screen
 window on the right physical display.
 
-## There is no SDK in the stereo path
+## There is no SDK in the stereo path {#there-is-no-sdk-in-the-stereo-path}
 
 XR glasses expose their 3D mode **as a display mode**: a VITURE Beast reports
 3840x1080 for side-by-side 3D and 1920x1200 for ordinary 2D. So stereo output is
@@ -34,7 +39,7 @@ offers scaled modes — a Beast reporting "5120x1600, looks like 2560x800" is be
 rendered at 5120x1600 and downsampled onto a 3840x1080 panel, which costs
 sharpness for nothing.
 
-## What it guesses, and why it says so
+## What it guesses, and why it says so {#what-it-guesses-and-why-it-says-so}
 
 None of a file's immersive geometry is reliably recorded in its container, and
 the conventions that exist are conventions of *file naming*. `Detect` reasons
@@ -53,12 +58,12 @@ One ambiguity is worth knowing: real VR180 stores 180°x180° per eye, which is
 **square**, so a side-by-side VR180 frame is 2:1 overall — indistinguishable by
 aspect from a monoscopic sphere. Only the name tells them apart.
 
-## Opening is not working
+## Opening is not working {#opening-is-not-working}
 
 A source is accepted only once it has actually **produced a picture**. Opening
 succeeds on files that never decode, so opening is not the test.
 
-## Controls
+## Controls {#controls}
 
 The transport bar appears when the pointer moves and hides after three idle
 seconds. Every element is a go-widgets widget and every glyph an Iconoir drawing
@@ -85,7 +90,7 @@ a headset cannot see what they pressed.
 
 The sound is the clock.
 
-## Limits
+## Limits {#limits}
 
 - **No loop.** A file plays through once. Seeking needs a clocked source, so it
   works on the AVPlayer path and not on the demuxed one.

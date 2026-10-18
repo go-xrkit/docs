@@ -1,4 +1,9 @@
-# `desk` — screens on a band, inside AR glasses
+---
+title: "desk — the ribbon of screens"
+weight: 70
+---
+
+# `desk` — screens on a band, inside AR glasses {#desk-screens-on-a-band-inside-ar-glasses}
 
 [github.com/go-xrkit/desk](https://github.com/go-xrkit/desk)
 
@@ -10,7 +15,7 @@ virtual displays that macOS extends the desktop onto, so ordinary applications
 run on them — the cursor goes there, you click in them — captured and drawn flat
 on a band at eye level.
 
-## The screens are flat
+## The screens are flat {#the-screens-are-flat}
 
 They were curved once, wrapped on a cylinder. Worn, that buys nothing: the screen
 you look at straight on is drawn **with a bow in it**, and the bow argues with the
@@ -51,7 +56,7 @@ exactly and every screen keeps its column as the desk grows; each screen costs a
 display to create and a stream to capture; and there are nine digits for the jump
 keys and none spare. Three, six or nine are the usual ones. Six by default.
 
-## One screen wider than the glasses
+## One screen wider than the glasses {#one-screen-wider-than-the-glasses}
 
 A spreadsheet does not fit a screen the size of one eye's view. `-wide 6400`
 makes every screen on the band that wide — three and a third views — and you
@@ -81,7 +86,7 @@ all. **At rest the two are identical** — which is why it took wearing to find,
 and why the test that keeps it honest turns the head rather than rendering one
 frame. So a wide desk takes the flat band unless you ask for something else.
 
-### The curve is virtual
+### The curve is virtual {#the-curve-is-virtual}
 
 A flat screen of 6400 was unusable at its edges before this: a flat plane keeps
 its edges further from the eye than its middle, and a rectilinear projection
@@ -101,21 +106,21 @@ It is amplified by what the screen demands: `desk.ComfortableYawDeg` = 20 is the
 turn a person makes without thinking, and a screen needing more than that gets
 the difference as gain rather than asking for a bigger turn.
 
-### Pushing it back moves both axes
+### Pushing it back moves both axes {#pushing-it-back-moves-both-axes}
 
 `⌃⌥⌘-` and `⌃⌥⌘=` move the band away and back, between `desk.MinDistance` = 1
 and `desk.MaxDistance` = 4 screens across the view. A distance scales the band in
 **both** axes — it used to scale only its length, which made a pushed-back screen
 half as wide and full height, and that is a squash rather than a distance.
 
-## Why the keyboard
+## Why the keyboard {#why-the-keyboard}
 
 The Beast, the Luma Ultra and the XREAL One series all do their 3DoF anchoring
 **inside the glasses**, which is also why their motion sensors are not offered to
 the host. So head movement is theirs and the ribbon is yours: the two compose
 instead of fighting. Turning the band is a key press, and it is deliberate.
 
-## The keys
+## The keys {#the-keys}
 
 In the window, and in the glasses:
 
@@ -133,7 +138,7 @@ That `↑` `↓` do nothing on the ribbon is a decision, not an omission: a band
 no rows, and a key that did *something* there would have to invent a meaning the
 viewer could not predict.
 
-## The gallery
+## The gallery {#the-gallery}
 
 `g` opens a head-locked grid of every screen at once. It answers the question the
 ribbon cannot: *where is the one three round the back?* — a screen behind the
@@ -184,7 +189,7 @@ The gallery is laid out in the **view** — the picture the glasses are actually
 given — because a screen laid out anywhere else is a screen the viewer cannot
 see, and seeing them all at once is the whole point.
 
-## System-wide shortcuts
+## System-wide shortcuts {#system-wide-shortcuts}
 
 The point of a desk in glasses is that you are *using* the screens on it. A
 shortcut that only worked when `xrdesk` was frontmost would be a shortcut for
@@ -235,7 +240,7 @@ System Settings. The two obvious alternative routes both demand the Accessibilit
 
 `-no-global` declines the whole thing.
 
-### They are not always the keys you get
+### They are not always the keys you get {#they-are-not-always-the-keys-you-get}
 
 Three things move a shortcut, and a session **prints what it landed on**.
 
@@ -275,7 +280,7 @@ A held key is **dropped rather than queued**. Presses arrive faster than a ribbo
 can turn, and a queue of them would keep turning it long after the finger came
 off.
 
-### Not having them is not a reason not to run
+### Not having them is not a reason not to run {#not-having-them-is-not-a-reason-not-to-run}
 
 macOS only, for now: Linux and Windows have no Carbon. There the keys work in the
 window exactly as the table above says, and the run reports that the global ones
@@ -283,11 +288,11 @@ were not claimed. The same is true on a macOS desktop where every candidate on
 the ladder is spoken for. A platform with no global shortcuts is a reason to run
 without them, not a reason not to run.
 
-## How it is put together
+## How it is put together {#how-it-is-put-together}
 
 | | |
 | --- | --- |
-| [`go-xrkit/xrkit`](xrkit.md) | `glasses` names the headset; `ribbon` places the screens and its `Nav` drives the band, the gallery and the promoted screen |
+| [`go-xrkit/xrkit`]({{< relref "xrkit.md" >}}) | `glasses` names the headset; `ribbon` places the screens and its `Nav` drives the band, the gallery and the promoted screen |
 | [`go-macos/accessibility`](https://github.com/go-macos/accessibility) | moves an application's windows onto a chosen screen |
 | [`go-macos/hotkey`](https://github.com/go-macos/hotkey) | the system-wide shortcuts, through Carbon, with no permission at all |
 | [`go-macos/virtualdisplay`](https://github.com/go-macos/virtualdisplay) | creates the displays macOS extends onto |
@@ -299,21 +304,21 @@ flat, so the buffer they are composited into IS what the glasses are given: a
 frame is a run-length copy of the band's window, and turning the band moves that
 window along it. The 2.8 ms the warp used to cost is not spent.
 
-## Platforms
+## Platforms {#platforms}
 
 | | Capture | Virtual displays |
 | --- | --- | --- |
 | macOS | ScreenCaptureKit | yes, via private CoreGraphics |
 | Linux | X11, and Wayland where the compositor offers `wlr-screencopy` | no — capture the displays you have |
 | Windows | in progress — enumeration must be added to `go-mswin/win32` first | no — an indirect display driver needs signing |
-| Android | `MediaProjection` | **no — settled**; see [`android`](android.md) |
+| Android | `MediaProjection` | **no — settled**; see [`android`]({{< relref "android.md" >}}) |
 
 Where virtual displays are not available the ribbon carries the real displays and
 windows instead. That is fewer screens, and everything else is identical — and it
 says so, because a fallback that looks like the feature is worse than one that
 announces itself.
 
-## Coverage
+## Coverage {#coverage}
 
 The geometry, the plan and the compositor have no operating system in them and
 are held at **100% statement coverage, gated in CI**. The gate selects files by
@@ -334,7 +339,7 @@ Playback needs a display, a video file and a pair of glasses, none of which a
 runner has, so a total-coverage figure would be a number chosen to pass rather
 than a standard.
 
-## What it does not claim
+## What it does not claim {#what-it-does-not-claim}
 
 This section says what was CONNECTED, as against what was read off a
 specification sheet. A field of view taken from a data sheet renders everything in
@@ -354,7 +359,7 @@ Not proven: the permission dialogue for the Accessibility grant, and the
 behaviour when that grant is absent — the machine this was built on holds it, so
 the refusal path is written and reviewed but never exercised end to end.
 
-## Putting applications on the screens
+## Putting applications on the screens {#putting-applications-on-the-screens}
 
 A ribbon screen is a **real desktop**. The cursor goes there, you click in it, a
 window moved there stays there. So an application is put on one by moving its
@@ -382,7 +387,7 @@ allowance for that is 64 points — a menu bar at any scale, and *smaller than h
 a screen*, which is what makes it safe rather than lax: a window within it is
 centred on the screen it was sent to and cannot be centred on a neighbour.
 
-## Settings
+## Settings {#settings}
 
 HCL, not JSON, for the two reasons anyone gives when asked: it takes **comments**,
 so a file can say *why* a shortcut was moved — the only part worth reading six
@@ -411,7 +416,7 @@ several headsets are attached and nobody has said which — once. Naming a displ
 with `-screen` is the answer for a script; writing a model in the settings is the
 answer for somebody who has already chosen.
 
-### `immersive`
+### `immersive` {#immersive}
 
 macOS draws a menu bar on **every** display when Spaces are separate, so the
 glasses carry one of their own — thirty points tall on a Beast — at a window level
