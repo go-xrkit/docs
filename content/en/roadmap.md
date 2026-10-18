@@ -1,6 +1,11 @@
-# Roadmap
+---
+title: "Roadmap"
+weight: 90
+---
 
-## Shipped
+# Roadmap {#roadmap}
+
+## Shipped {#shipped}
 
 **`go-xrkit/xrkit`** — `pose`, `stereo`, `projection`, `warp`, `ribbon` and
 `glasses` are complete and gated at 100% statement coverage, on six
@@ -24,11 +29,11 @@ refuses to let an app create a display it can launch anything onto — **and the
 glasses' UVC camera over `usbfs` on an unrooted phone**, at 23.8 fps with
 nothing dropped.
 
-## Known limits, today
+## Known limits, today {#known-limits-today}
 
 - **Head tracking is yaw, from the CAMERA, and not from an IMU.** The VITURE
   Beast's IMU is still not reachable over HID (see
-  [Architecture](architecture.md)), and newer generations use USB control
+  [Architecture]({{< relref "architecture.md" >}})), and newer generations use USB control
   transfers instead, which remains unstarted. What exists instead is
   `xrkit`'s `headflow`: it recovers **yaw** by matching column profiles between
   camera frames, measured live on a Pixel 11 Pro Fold at **790 µs of an 88 ms
@@ -42,7 +47,7 @@ nothing dropped.
   tested everywhere it builds; the decoder and window back-ends in `player`
   are not written for Linux or Windows yet.
 
-## Next
+## Next {#next}
 
 - USB-control-transfer head tracking for newer XR glasses generations, which
   would put a GPU warp back on the table for per-frame orientation updates —

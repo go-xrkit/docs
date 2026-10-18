@@ -1,4 +1,9 @@
-# `android` — capture, the glasses' camera, and displays you own
+---
+title: "android — capture and owned displays"
+weight: 80
+---
+
+# `android` — capture, the glasses' camera, and displays you own {#android-capture-the-glasses-camera-and-displays-you-own}
 
 [github.com/go-xrkit/android](https://github.com/go-xrkit/android)
 
@@ -16,7 +21,7 @@ adapters: `Displays`, `CaptureDisplay`, `Stream.Frame() (Frame, bool)` lending
 borrowed pixels with a stride carried and never assumed, and an idempotent
 `Close`.
 
-## Two processes, because JNI needs cgo
+## Two processes, because JNI needs cgo {#two-processes-because-jni-needs-cgo}
 
 Android hands no drawable surface to a process that is not the app, and every
 path to one is behind JNI, which needs cgo. So an Android build is **two
@@ -30,11 +35,11 @@ a real installable APK.
 that `arm64` links CGO-free **and** that `arm`, `amd64` and `386` still require
 cgo, so the day that changes it is noticed rather than assumed.
 
-## What Android will and will not allow
+## What Android will and will not allow {#what-android-will-and-will-not-allow}
 
 The interesting question for an XR virtual desktop is not "can I capture the
 screen" — it is "can I create extra desktops and put applications on them", the
-way [`desk`](desk.md) does on macOS. The boundary is **not** *your own app*
+way [`desk`]({{< relref "desk.md" >}}) does on macOS. The boundary is **not** *your own app*
 versus *other people's*, and **not** *virtual display* versus *real one*. It is
 an activity **launch** versus a **window**, on a display you *made* versus a
 display you were *given*:
@@ -63,7 +68,7 @@ external display is — an ordinary app **may** place other applications with
 `ActivityOptions.setLaunchDisplayId`. The refusal is about *making* a display,
 not about using the one you were given.
 
-## The limit is the safety
+## The limit is the safety {#the-limit-is-the-safety}
 
 There is a ceiling on how many displays may be made at once, and past it the
 system dies. The ceiling observed on one emulator was **304**, and that number is
@@ -71,7 +76,7 @@ deliberately **not hard-coded anywhere** — it is one emulator's figure. The
 *shape* of the failure is the finding, and the limit refuses in both directions
 rather than trusting a constant.
 
-## Coverage
+## Coverage {#coverage}
 
 100% statement coverage, gated in CI, error branches included — 87 functions,
 100.0% under both `go1.26.4` and `go1.27.1`. The whole test suite runs on all six
@@ -87,7 +92,7 @@ whose backport is still open — it passes under 1.27.1 here, where the same lan
 fails in go-gfx/gfx. A code-generation defect is established by LANE, never by
 repository.
 
-## The camera: UVC over `usbfs`, on a phone nobody rooted
+## The camera: UVC over `usbfs`, on a phone nobody rooted {#the-camera-uvc-over-usbfs-on-a-phone-nobody-rooted}
 
 Since v0.12.0 this package also reads the camera the glasses carry. There is no
 `/dev/video*` for it — an ordinary Android app is refused both nodes — so the
@@ -107,14 +112,14 @@ Both formats are decoded, and they are not whole in the same way:
 `UVCNegotiation.Kind` is where it comes from — a negotiation result should say
 what was *agreed* rather than leave a stream to guess.
 
-### Measured on the device, with the conditions it was measured under
+### Measured on the device, with the conditions it was measured under {#measured-on-the-device-with-the-conditions-it-was-measured-under}
 
 2026-10-18, a **VITURE Beast** on a **Pixel 11 Pro Fold**:
 
 | | |
 | --- | --- |
 | **rate** | **23.8 fps with nothing dropped** at 640×480 YUY2, against the 25 the camera advertises; 14.8 and none at 320×240 |
-| **a worn head turn, replayed offline** | **197.9° of travel** in 2.9 s — out to −52°, back **through zero**, out to +80° — 27 of 30 frames tracked by [`xrkit`](xrkit.md)'s `headflow` |
+| **a worn head turn, replayed offline** | **197.9° of travel** in 2.9 s — out to −52°, back **through zero**, out to +80° — 27 of 30 frames tracked by [`xrkit`]({{< relref "xrkit.md" >}})'s `headflow` |
 | **live, in one process on the phone** | **748.5° of travel** over 86 matched frames in 8 s, the tracker itself costing **790 µs of an 88 ms interval — 0.9 %** |
 
 ⚠ **Those two rows were taken under different ring depths and must not be added
@@ -146,7 +151,7 @@ They go to the durable directory outside every work tree that
 a repository, and a `.gitignore` entry would be the wrong fix — and the tool
 prints the path so a person can look and delete.
 
-## What it does not claim
+## What it does not claim {#what-it-does-not-claim}
 
 **The glasses are attached now, and what that changes is marked above.** Until
 2026-10-18 nothing here had seen XR hardware; the capture and virtual-display
