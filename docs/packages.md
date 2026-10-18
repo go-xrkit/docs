@@ -83,7 +83,7 @@ m.ApplySwapRB(src, dst, dstStride, 0, 0)
 
 The per-pixel trigonometry in `projection` is fine to reason about and far too
 slow for four million pixels sixty times a second. But it only depends on the
-viewer's **orientation**, and when that is fixed — no head tracking, a screen
+viewer's **orientation**, and when that is fixed — no yaw fed in, a screen
 anchored in front of the viewer — the answer for every output pixel is the
 same on every frame. So it is computed once into a table of source offsets,
 and each frame becomes a gather. Nearest-neighbour sampling is deliberate: the
@@ -141,3 +141,46 @@ with its provenance attached, and HCL has *comments*, so what you measured sits
 next to the number you measured it from. A file that exists and is wrong is an
 error naming the file, the line and the block — a catalogue line that quietly
 does nothing is the same invisible failure as a wrong angle.
+
+## headflow
+
+**Where the yaw comes from, when the headset will not say.** A VITURE Beast runs
+its own 3DOF tracking and publishes no orientation at all — measured three ways
+on 2026-09-07, none of which produced a number. Its camera, though, is an
+ordinary UVC device, and a turn of the head is plainly visible in it.
+
+A yaw slides the whole picture sideways together. So each column of a frame is
+summed into one number, that one-dimensional profile is slid against the previous
+frame's until it fits, and the best shift is the turn. No feature detection, no
+model, no state beyond the last profile; under a millisecond on a 1920×1080
+frame, and **790 µs of an 88 ms interval** measured live on a phone.
+
+⛔⛔ **The calibration is a FIELD OF VIEW, not a number of columns — and it has to
+be.** It was first measured as columns a degree (`ColumnsPerDegree`, 26.5) on
+1920-wide frames, and columns are a property of the sensor **readout**: the same
+camera read out at 640 puts the same field of view into a third as many of them,
+so the same physical turn slides a third as far. A yaw computed from columns
+alone on a 640-wide frame comes out **three times too small** — no error, no loss
+of confidence, just a plausible wrong number. The stored figure is
+`HorizontalFOV` (≈ 72.45°, that measurement divided by the width it was taken
+at), and `ColumnsPerDegreeAt` puts it back into columns for whatever frame
+actually arrives. The defect was dormant while one camera fed one path, and
+became live when `android` negotiated 640×480 while macOS kept feeding 1920 —
+into the same `Tracker`.
+
+What it is good enough for, measured: held on a head and swept back and forth,
+the residual after returning to the start was **1.14 %** of the distance
+travelled; stationary over five minutes and 7474 frames it accumulated
+**exactly nothing**. So *which screen is somebody facing* — tens of degrees
+apart — is comfortable. Holding a picture locked to the head at 1:1 wants under
+20 ms of latency and is not.
+
+⛔ **Held at ARM'S LENGTH it is nine times worse** (10.53 % instead of 1.14 %),
+which is worth knowing before testing it that way: an arm moves the camera half
+a metre through the room as well as turning it, near things then slide further
+than far ones, and one best-fit shift is a biased compromise between them. On a
+head the camera turns nearly about its own centre.
+
+It measures **yaw only**, it is **not a pose** (no position, no gravity, no
+absolute heading), and it needs something to look at — a blank wall offers
+nothing to match, and the confidence says so instead of inventing a number.

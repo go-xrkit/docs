@@ -49,7 +49,7 @@ silently guessing — because a viewer that mis-detects 180° content as 360°
 shows the world squeezed into half the view and gives the user nothing to
 act on.
 
-## Why there is no head tracking (yet)
+## Why head tracking comes from the CAMERA and not the IMU
 
 The VITURE Beast's IMU is not reachable over HID: its interfaces open without
 complaint and `SetReport` reports success, and they emit nothing at all —
@@ -57,11 +57,25 @@ proven against a control run that captured 481 reports from the same reader
 on other devices. See
 [go-macos/iokit](https://github.com/go-macos/iokit).
 
-That absence is exactly why `warp` exists as a precomputed table rather than
-a per-frame computation: with a fixed orientation, the sampling is identical
-on every frame, and the measured cost of the two-eye pass (~3 ms at 4K, ~8 ms
-at 8K, against a 16.6 ms budget at 60 Hz) means a GPU warp is not needed until
-head tracking arrives.
+So the orientation comes from the **camera** instead. `xrkit`'s `headflow`
+matches column profiles between consecutive frames and recovers **yaw**;
+`go-xrkit/android` feeds it from the glasses' UVC camera over `usbfs`. Measured
+live on a Pixel 11 Pro Fold, the tracker costs **790 µs of an 88 ms interval —
+0.9 %** and a worn left-right sweep comes back as **197.9° of travel**. The
+calibration is a **field of view** rather than a column count
+(`HorizontalFOV ≈ 72.45°`, `ColumnsPerDegreeAt(width)`), so the same constant
+holds at any capture width.
+
+⚠ That is **yaw only** — no pitch, no roll — and at ~42 ms a frame it is
+comfortably inside the 107 ms that `headflow` puts on *choosing which screen
+somebody faces*, and still outside the under-20 ms wanted for locking an image
+to the head at 1:1.
+
+That is also why `warp` is still a precomputed table rather than a per-frame
+computation: with a fixed orientation the sampling is identical on every frame,
+and the measured cost of the two-eye pass (~3 ms at 4K, ~8 ms at 8K, against a
+16.6 ms budget at 60 Hz) means a GPU warp is not needed until the orientation
+updates per frame — which it does not yet do in this path.
 
 ## Quality bar
 

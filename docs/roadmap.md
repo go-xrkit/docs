@@ -20,13 +20,22 @@ applications moved onto them by name.
 **`go-xrkit/android`** — screen capture on Android as an ordinary
 `CGO_ENABLED=0` Go binary talking to a small Java host over a socket, plus a
 documented account, with transcripts, of the four different ways Android 15
-refuses to let an app create a display it can launch anything onto.
+refuses to let an app create a display it can launch anything onto — **and the
+glasses' UVC camera over `usbfs` on an unrooted phone**, at 23.8 fps with
+nothing dropped.
 
 ## Known limits, today
 
-- **No head tracking.** The VITURE Beast's IMU is not reachable over HID (see
-  [Architecture](architecture.md)); newer generations use USB control
-  transfers instead, which is a separate, unstarted piece of work.
+- **Head tracking is yaw, from the CAMERA, and not from an IMU.** The VITURE
+  Beast's IMU is still not reachable over HID (see
+  [Architecture](architecture.md)), and newer generations use USB control
+  transfers instead, which remains unstarted. What exists instead is
+  `xrkit`'s `headflow`: it recovers **yaw** by matching column profiles between
+  camera frames, measured live on a Pixel 11 Pro Fold at **790 µs of an 88 ms
+  interval — 0.9 %**, and a worn left-right sweep comes back as **197.9° of
+  travel**. That is enough to choose which screen somebody faces, which
+  `headflow` itself puts at 107 ms; it is **not** pitch, not roll, and not the
+  under-20 ms budget for locking an image to the head at 1:1.
 - **No Matroska.** AVFoundation does not demux MKV or WebM; MP4/MOV/M4V play.
 - **No seeking, no audio, no loop.** A file plays through once, silently.
 - **macOS only.** The geometry and display logic in `xrkit` are portable and

@@ -7,7 +7,7 @@ Four repositories with code: the geometry, and the three things built on it.
 | [`xrkit`](repos/xrkit.md) | the geometry — `pose`, `stereo`, `projection`, `warp`, `ribbon`, `glasses`. Every package testable with no headset attached, gated at 100% coverage |
 | [`player`](repos/player.md) | `xrplay film.mp4` — 360°, VR180 and 3D films, per eye, full screen on the glasses' own display |
 | [`desk`](repos/desk.md) | several computer screens on a flat band, scrolled from the keyboard |
-| [`android`](repos/android.md) | screen capture on Android, as a CGO-free Go binary talking to a small Java host |
+| [`android`](repos/android.md) | screen capture on Android and the glasses' UVC camera over `usbfs`, as a CGO-free Go binary talking to a small Java host |
 
 ## How they fit together
 
@@ -37,10 +37,16 @@ measured one.
   unconfirmed. Capture of a whole display on macOS is **not yet proven**: it is
   blocked on a Screen Recording permission that could not be granted on the
   machine it was built on. Capture of an application window *is* proven.
-- **`android`** — **no XR glasses were attached to an Android device for any of
-  it.** Everything was measured on an arm64 Android 15 emulator. The ceiling of
-  304 displays is one emulator's number and must not be hard-coded anywhere; the
-  *shape* of the failure is the finding.
+- **`android`** — **glasses have been attached since 2026-10-18, for the camera
+  and head-tracking rows only.** A VITURE Beast on a Pixel 11 Pro Fold: the
+  camera streams through `usbfs` on an unrooted phone at **23.8 fps with nothing
+  dropped**, and a worn head turn comes back as **197.9° of travel**. Everything
+  else on that page — screen capture, virtual displays, the 304-display ceiling —
+  is still an arm64 Android 15 **emulator's** figure. That ceiling is one
+  emulator's number and must not be hard-coded anywhere; the *shape* of the
+  failure is the finding. Why MJPEG delivers only 3.21 fps on that camera is
+  **open**, and an earlier claim that the camera truncates its own frames is
+  withdrawn — see [`android`](repos/android.md).
 - **`xrkit`** — the `glasses` catalogue grades every entry `Observed`,
   `Enumerated` or `Published`, and no macOS display-name artifact has been read
   for any model yet.

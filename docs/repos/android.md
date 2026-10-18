@@ -1,10 +1,11 @@
-# `android` — capture, and displays you own
+# `android` — capture, the glasses' camera, and displays you own
 
 [github.com/go-xrkit/android](https://github.com/go-xrkit/android)
 
 Screen capture on Android from **pure Go**, `CGO_ENABLED=0`, for an XR compositor
 that redraws every frame — plus a Go API for the displays an ordinary app is
-allowed to make for itself.
+allowed to make for itself, and a **UVC camera client** that reads the glasses'
+camera through `usbfs` on an **unrooted** phone.
 
 It is the Android member of a family —
 [`go-macos/screencapture`](https://github.com/go-macos/screencapture),
@@ -86,11 +87,73 @@ whose backport is still open — it passes under 1.27.1 here, where the same lan
 fails in go-gfx/gfx. A code-generation defect is established by LANE, never by
 repository.
 
+## The camera: UVC over `usbfs`, on a phone nobody rooted
+
+Since v0.12.0 this package also reads the camera the glasses carry. There is no
+`/dev/video*` for it — an ordinary Android app is refused both nodes — so the
+stream goes through **`usbfs`**: the Java host calls `openDevice`, lends the file
+descriptor over the socket, and the Go process drives UVC on it directly with
+`USBDEVFS_*` ioctls whose numbers are **computed** from this package's own
+mirrors of the kernel structs and asserted against `usbdevice_fs.h`.
+
+Both formats are decoded, and they are not whole in the same way:
+
+| | whole by |
+| --- | --- |
+| **YUY2** | its **length**, `w*h*2`. A short frame lost packets and is dropped, never padded |
+| **MJPEG** | its **markers**. A compressor's output is whatever the scene made it, so "shorter than expected" describes a *wall*, not a loss |
+
+`NewFrameAssemblerFor` takes the format for exactly that reason, and
+`UVCNegotiation.Kind` is where it comes from — a negotiation result should say
+what was *agreed* rather than leave a stream to guess.
+
+### Measured on the device, with the conditions it was measured under
+
+2026-10-18, a **VITURE Beast** on a **Pixel 11 Pro Fold**:
+
+| | |
+| --- | --- |
+| **rate** | **23.8 fps with nothing dropped** at 640×480 YUY2, against the 25 the camera advertises; 14.8 and none at 320×240 |
+| **a worn head turn, replayed offline** | **197.9° of travel** in 2.9 s — out to −52°, back **through zero**, out to +80° — 27 of 30 frames tracked by [`xrkit`](xrkit.md)'s `headflow` |
+| **live, in one process on the phone** | **748.5° of travel** over 86 matched frames in 8 s, the tracker itself costing **790 µs of an 88 ms interval — 0.9 %** |
+
+⚠ **Those two rows were taken under different ring depths and must not be added
+together.** The live run delivered 11.4 fps (an 88 ms interval) and dropped 101
+frames for every 91 it kept; the 23.8 came afterwards, from the fix that run
+exposed. A live tracking run at the new depth has not been taken.
+
+⛔ **The frame rate was OURS, not the camera's, for five releases.**
+`StreamURBs` — isochronous requests in flight — was **4**, covering 4 ms of bus
+schedule, and any consumer costing more than that left nothing submitted while it
+worked. Sixteen gives 10.5 → **23.8 fps** and 79 → **0** dropped on the same
+phone. Thirty-two makes this camera stop sending altogether, which closed that
+axis; so in **v0.17.0** the reaping became a goroutine that only reaps, assembles
+and resubmits, and the decode moved to the caller's goroutine where its cost is
+the caller's.
+
+⚠ **MJPEG is slower here and WHY is open.** It advertises 30 fps at every size
+and delivered 1.97 fps at a ring of 4, 3.21 at 16, with every loss showing a
+start-of-image and no end-of-image. An earlier version of this page's upstream
+README called that *"the camera truncates its own frames"*; that reading is
+**withdrawn**. A missing tail says where the bytes stopped arriving, not who
+stopped sending them — and starvation produces the same signature, which was
+demonstrably still present (a 19.09 ms decode against a ring covering 16). The
+run that would settle it has not been taken.
+
+⛔ **The frames are pictures of a room and of whoever is wearing the headset.**
+They go to the durable directory outside every work tree that
+[`go-appdirs/outdir`](https://github.com/go-appdirs/outdir) chooses — never into
+a repository, and a `.gitignore` entry would be the wrong fix — and the tool
+prints the path so a person can look and delete.
+
 ## What it does not claim
 
-**No XR glasses were ever attached to an Android device for any of this.**
-Everything was measured on an arm64 Android 15 (API 35) emulator, and the
-transcript *is* the documentation: the probe that produced every number is in the
-APK and can be re-run.
+**The glasses are attached now, and what that changes is marked above.** Until
+2026-10-18 nothing here had seen XR hardware; the capture and virtual-display
+figures on this page are still an **arm64 Android 15 (API 35) emulator's**, and
+only the camera and head-tracking rows above were measured on a real phone with
+real glasses. The transcript *is* the documentation in both cases: the probe that
+produced every number is in the APK and can be re-run.
 
-If you want a figure measured rather than quoted, **send us the hardware**.
+If you want a figure measured rather than quoted, and it is not one of the rows
+above, **send us the hardware**.
