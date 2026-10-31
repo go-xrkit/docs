@@ -26,8 +26,9 @@ applications moved onto them by name.
 `CGO_ENABLED=0` Go binary talking to a small Java host over a socket, plus a
 documented account, with transcripts, of the four different ways Android 15
 refuses to let an app create a display it can launch anything onto — **and the
-glasses' UVC camera over `usbfs` on an unrooted phone**, at 23.8 fps with
-nothing dropped.
+glasses' UVC camera over `usbfs` on an unrooted phone**, with nothing dropped —
+at 23.8 fps on 18 October and 10.0 on 31 October, which is a property of the
+camera's byte rate on the day rather than of this code.
 
 ## Known limits, today {#known-limits-today}
 
