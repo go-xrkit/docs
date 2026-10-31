@@ -44,14 +44,18 @@ measured one.
   machine it was built on. Capture of an application window *is* proven.
 - **`android`** — **glasses have been attached since 2026-10-18, for the camera
   and head-tracking rows only.** A VITURE Beast on a Pixel 11 Pro Fold: the
-  camera streams through `usbfs` on an unrooted phone at **23.8 fps with nothing
-  dropped**, and a worn head turn comes back as **197.9° of travel**. Everything
-  else on that page — screen capture, virtual displays, the 304-display ceiling —
-  is still an arm64 Android 15 **emulator's** figure. That ceiling is one
-  emulator's number and must not be hard-coded anywhere; the *shape* of the
-  failure is the finding. Why MJPEG delivers only 3.21 fps on that camera is
-  **open**, and an earlier claim that the camera truncates its own frames is
-  withdrawn — see [`android`]({{< relref "repos/android.md" >}}).
+  camera streams through `usbfs` on an unrooted phone, and a worn head turn comes
+  back as **197.9° of travel**. ⛔ **Its frame rate is not settled**: 23.8 fps
+  with nothing dropped on 18 October, and **10.0 fps over five runs on
+  31 October** in the same configuration, because this camera's byte rate differs
+  by 2.4× between the two evenings for an identical negotiation — not because of
+  the light, which was tested and refuted. Everything else on that page — screen
+  capture, virtual displays, the 304-display ceiling — is still an arm64
+  Android 15 **emulator's** figure. That ceiling is one emulator's number and
+  must not be hard-coded anywhere; the *shape* of the failure is the finding. Why
+  MJPEG delivers 1.71–3.44 fps on that camera is **open** — though our own
+  starvation is now excluded by invariants measured inside each run — see
+  [`android`]({{< relref "repos/android.md" >}}).
 - **`xrkit`** — the `glasses` catalogue grades every entry `Observed`,
   `Enumerated` or `Published`, and no macOS display-name artifact has been read
   for any model yet.

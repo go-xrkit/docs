@@ -118,7 +118,7 @@ what was *agreed* rather than leave a stream to guess.
 
 | | |
 | --- | --- |
-| **rate** | **23.8 fps with nothing dropped** at 640×480 YUY2, against the 25 the camera advertises; 14.8 and none at 320×240 |
+| **rate** | **23.8 fps with nothing dropped** at 640×480 YUY2, against the 25 the camera advertises; 14.8 and none at 320×240. ⛔ **This did not reproduce on 2026-10-31 — see below** |
 | **a worn head turn, replayed offline** | **197.9° of travel** in 2.9 s — out to −52°, back **through zero**, out to +80° — 27 of 30 frames tracked by [`xrkit`]({{< relref "xrkit.md" >}})'s `headflow` |
 | **live, in one process on the phone** | **748.5° of travel** over 86 matched frames in 8 s, the tracker itself costing **790 µs of an 88 ms interval — 0.9 %** |
 
@@ -136,14 +136,54 @@ axis; so in **v0.17.0** the reaping became a goroutine that only reaps, assemble
 and resubmits, and the decode moved to the caller's goroutine where its cost is
 the caller's.
 
+⚠ That paragraph is **half** of the story, and the half that reproduces is the
+*shape* of the sweep, not its height — see
+[23.8 fps did not reproduce](#the-rate-did-not-reproduce) below. The ring bound
+the rate on the evening the camera had bytes to give; on an evening when it does
+not, the ring is no longer what binds.
+
 ⚠ **MJPEG is slower here and WHY is open.** It advertises 30 fps at every size
 and delivered 1.97 fps at a ring of 4, 3.21 at 16, with every loss showing a
 start-of-image and no end-of-image. An earlier version of this page's upstream
 README called that *"the camera truncates its own frames"*; that reading is
 **withdrawn**. A missing tail says where the bytes stopped arriving, not who
-stopped sending them — and starvation produces the same signature, which was
-demonstrably still present (a 19.09 ms decode against a ring covering 16). The
-run that would settle it has not been taken.
+stopped sending them.
+
+## ⛔⛔⛔ 23.8 fps did not reproduce, thirteen days later {#the-rate-did-not-reproduce}
+
+2026-10-31, same phone, same glasses, same commit, in the configuration that
+produced it — default pick, `YUY2 640×480 @25fps`, payload 2400, alternate 5,
+`StreamURBs = 16`. **Five runs: 9.97, 10.0, 9.98, 10.0, 9.97 fps**, every one
+with **0 dropped and 0 late**.
+
+The ring sweep, repeated the same evening, keeps its **shape** and loses half
+its **height**: ring 4 → 8.91 fps and 2 dropped; ring 16 → 10.0 and none. So
+`StreamURBs = 16` keeps its justification — it removes the dropped frames in
+both regimes — while **"23.8 fps" turns out to be a figure of that evening's
+camera state, not a property of this device.**
+
+What differs is the camera's own byte rate for an identical negotiation: **781
+bytes an interval** of the 2400 it reserved, and the total is *exactly* ten
+614 400-byte frames plus 7 992 × 12 bytes of UVC header — so nothing is missing
+and nothing is ours. The afternoon of 18 October it must have emitted ~1 830.
+
+⚠ **It is not the light.** Two runs, luminance `4..86` and `37..255`, returned
+**the same byte and packet totals** (6 239 904 / 7 992). YUY2 frames are a fixed
+size, so its byte rate *is* its frame rate — and that did not move when the
+scene brightened threefold. The obvious guess, refuted.
+
+⭐⭐ **And MJPEG, twice the same evening, twenty minutes apart: 3.44 and
+1.71 fps** — a factor of two on its own, which is why no rate comparison is
+offered for it either. What *both* runs agree on needs no comparison: `0 late`
+(the handover never shed a frame), ≈8 000 packets a second (**one per
+microframe**, so the isochronous schedule was fully claimed) and 70 bytes an
+interval of the 800 reserved. **Our own starvation is excluded by those
+invariants**; why the camera truncates stays unexplained.
+
+**Still open:** why the same camera gives 1 830 bytes an interval one day and
+781 another. The glasses were **worn** for the 18 October runs and sat on a desk
+for these — uncontrolled both times, so it is the next variable to try rather
+than an explanation.
 
 ⛔ **The frames are pictures of a room and of whoever is wearing the headset.**
 They go to the durable directory outside every work tree that
