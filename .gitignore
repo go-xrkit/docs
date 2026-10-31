@@ -1,3 +1,15 @@
+# Hugo's build outputs.
+#
+# ⛔ .hugo_build.lock IS CREATED BY EVERY `hugo` RUN, and without this line it
+# gets committed by whoever builds the site before `git add -A` — which is
+# exactly what happened in the first draft of the commit that added this file.
+# The migration from MkDocs to Hugo did not bring the ignore file with it.
+/public/
+/resources/_gen/
+.hugo_build.lock
+
+# MkDocs, which this site was built with until the migration. Kept because a
+# stale clone or an old virtualenv still produces them.
 /site/
 .venv/
 __pycache__/
