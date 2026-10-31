@@ -167,10 +167,18 @@ bytes an interval** of the 2400 it reserved, and the total is *exactly* ten
 614 400-byte frames plus 7 992 × 12 bytes of UVC header — so nothing is missing
 and nothing is ours. The afternoon of 18 October it must have emitted ~1 830.
 
-⚠ **It is not the light.** Two runs, luminance `4..86` and `37..255`, returned
-**the same byte and packet totals** (6 239 904 / 7 992). YUY2 frames are a fixed
-size, so its byte rate *is* its frame rate — and that did not move when the
-scene brightened threefold. The obvious guess, refuted.
+⚠ **It is not the light — and that took two attempts, the first of which did not
+count.** The obvious test pointed the glasses at a lamp in a dark room: luminance
+`4..86` → `37..255`, byte and packet totals unchanged, and this page said
+*refuted*. It was not. **A lamp saturates the MAXIMUM and barely moves the
+mean**, and auto-exposure integrates over the mean, so the two runs may have been
+the same scene as far as the sensor was concerned — and a `min..max` range cannot
+say. The experiment was inconclusive and looked conclusive.
+
+The probe reports the **mean** now, and the refutation that counts is a run whose
+mean went **22.9 → 47.7** of 255 — a true doubling — with the totals still
+unmoved (6 239 904 / 7 992 against 6 239 808 / 7 992). YUY2 frames are a fixed
+size, so its byte rate *is* its frame rate.
 
 ⭐⭐ **And MJPEG, twice the same evening, twenty minutes apart: 3.44 and
 1.71 fps** — a factor of two on its own, which is why no rate comparison is
@@ -180,10 +188,26 @@ microframe**, so the isochronous schedule was fully claimed) and 70 bytes an
 interval of the 800 reserved. **Our own starvation is excluded by those
 invariants**; why the camera truncates stays unexplained.
 
-**Still open:** why the same camera gives 1 830 bytes an interval one day and
-781 another. The glasses were **worn** for the 18 October runs and sat on a desk
-for these — uncontrolled both times, so it is the next variable to try rather
-than an explanation.
+## Still open — with four candidates dead {#four-candidates-eliminated}
+
+Why the same camera gives ~1 830 bytes an interval one day and 781 another is
+**unexplained**. Four candidates are ruled out, each by a measurement rather than
+by argument:
+
+| candidate | how it died |
+| --- | --- |
+| **the light** | the scene's **mean** luminance doubled, 22.9 → 47.7 of 255, and the byte and packet totals did not move |
+| the glasses' **display** being active | `dumpsys display` shows the Beast `state ON` on both evenings |
+| the camera's state after being **taken from `uvcvideo`** | measured straight after a replug, on a freshly bound device: the same signature |
+| a forced width vs the **default** pick | identical negotiation — `YUY2 640×480 @25fps`, payload 2400, alternate 5 |
+
+**What is left:** the glasses were being **worn** for the 18 October runs and sat
+on a desk for all of these — uncontrolled both times, and the next thing to try.
+Beyond that nothing is named: temperature, firmware state, the hub and the
+phone's USB power budget are all unexamined.
+
+⭐ An open question with four eliminations is worth more than an open question,
+and the eliminations are what a later session would otherwise redo.
 
 ⛔ **The frames are pictures of a room and of whoever is wearing the headset.**
 They go to the durable directory outside every work tree that
