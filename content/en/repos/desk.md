@@ -8,7 +8,8 @@ weight: 70
 [github.com/go-xrkit/desk](https://github.com/go-xrkit/desk)
 
 Several computer screens on a band inside AR glasses, scrolled from the
-keyboard. Pure Go, `CGO_ENABLED=0`, no vendor SDK.
+keyboard — or, on a phone, **by turning your head**. Pure Go, `CGO_ENABLED=0`,
+no vendor SDK.
 
 XR glasses show one screen. This puts a row of them beside each other: real
 virtual displays that macOS extends the desktop onto, so ordinary applications
@@ -317,6 +318,42 @@ Where virtual displays are not available the ribbon carries the real displays an
 windows instead. That is fewer screens, and everything else is identical — and it
 says so, because a fallback that looks like the feature is worse than one that
 announces itself.
+
+### ⭐ On the phone, and what it is for there {#on-the-phone}
+
+Measured on a Pixel 11 Pro Fold with VITURE Beast glasses on the USB-C port,
+2026-11-01, from `xrdesk`'s own journal:
+
+```
+on "VITURE Beast" 1920x1080
+VITURE Beast: 6 screens of 1920x1080, 51.57°x30.41° each, curved 20.0° at 1.00x
+presenting on display 13 "VITURE Beast" 1920x1080 @110dpi 60Hz (presentation) at 1920x1080, 3 slot(s)
+the panorama reaches 100.0% of the view
+312 frames in 5.008s
+```
+
+**62 frames a second**, composed in Go and pushed through the host's shared
+buffer onto a `Presentation` on the glasses' own display.
+
+⭐ **Why it matters there in particular.** Android's own desktop mode already
+puts *a* screen on the glasses. What it cannot do is a band wider than the view
+that you reach by looking along it: six screens at 51.57° each is about **309°
+of band against roughly 50° of view**. So on Android the head is not a
+convenience, it is the interface — which is why `-head` is **on by default**
+there and off everywhere else, where the camera must not come on unasked and the
+shortcut is one press away.
+
+⚠ **Two gestures stay a person's**, and no amount of code removes them: the
+`MediaProjection` consent dialog is never remembered, so it is answered once a
+session, and the headset's USB permission is granted **per application**, which
+costs an unplug and a replug the first time a given APK asks for the camera.
+
+⛔ Four defects stood between a binary that cross-compiled and a picture, and
+none was visible without the device — `GOOS=android` satisfies the `linux` build
+tag, so the ribbon asked **X11** where the glasses were; `window.Open` compiles
+there and only fails when called; a macOS retry policy waited fifteen seconds a
+start on three platforms; and nothing on a headset could turn head-following on.
+See [`go-xrkit/desk#254`](https://github.com/go-xrkit/desk/pull/254).
 
 ## Coverage {#coverage}
 
