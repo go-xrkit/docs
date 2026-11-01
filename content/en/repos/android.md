@@ -118,7 +118,7 @@ what was *agreed* rather than leave a stream to guess.
 
 | | |
 | --- | --- |
-| **rate** | **23.8 fps with nothing dropped** at 640×480 YUY2, against the 25 the camera advertises; 14.8 and none at 320×240. ⛔ **This did not reproduce on 2026-10-31 — see below** |
+| **rate** | ⛔ **Do not rely on this figure.** It was *23.8 fps with nothing dropped* at 640×480 YUY2; eight runs on 2026-10-31 and 11-01 give **10 fps**, including one from the very commit that reported 23.8 — [see below](#not-reproducible) |
 | **a worn head turn, replayed offline** | **197.9° of travel** in 2.9 s — out to −52°, back **through zero**, out to +80° — 27 of 30 frames tracked by [`xrkit`]({{< relref "xrkit.md" >}})'s `headflow` |
 | **live, in one process on the phone** | **748.5° of travel** over 86 matched frames in 8 s, the tracker itself costing **790 µs of an 88 ms interval — 0.9 %** |
 
@@ -188,11 +188,47 @@ microframe**, so the isochronous schedule was fully claimed) and 70 bytes an
 interval of the 800 reserved. **Our own starvation is excluded by those
 invariants**; why the camera truncates stays unexplained.
 
-## Still open — with four candidates dead {#four-candidates-eliminated}
+## ⛔⛔⛔ Resolved: the figure is not reproducible by its own code {#not-reproducible}
 
-Why the same camera gives ~1 830 bytes an interval one day and 781 another is
-**unexplained**. Four candidates are ruled out, each by a measurement rather than
-by argument:
+The question below — *which condition differed between the two evenings* —
+assumed the 23.8 was a measurement of something. On **2026-11-01** the tag that
+produced it was checked out and run on the same phone and the same glasses:
+
+```
+# v0.16.0, the exact commit of the 23.8 fps sweep
+10 frames in 998ms; 7984 packets, 6239712 bytes; 0 dropped, 0 late
+ANSWER 10 WHOLE FRAMES at 10 fps
+```
+
+**Eight runs, all ten:** 9.97 · 10.0 · 9.98 · 10.0 · 9.97 · 9.99 · 9.97 · 10.0 —
+across **two versions of the code**, five scene luminance means (22.9 to 114.6),
+the headset **worn** and on a desk, and a freshly enumerated camera.
+
+| | |
+| --- | --- |
+| the **decoupling is cleared** | the old coupled reader gives the same 10 fps, so v0.17.0 cost nothing |
+| 23.8 is **not reproducible by the code that produced it** | on its own hardware |
+| it **contradicts the byte budget of the day before** | 832 bytes an interval (2026-10-17) allows 10.5 fps; 23.8 needs ~1 830 |
+
+**So it was neither a camera condition nor a regression: it is a figure that
+cannot be relied on.** What its error *was* is not claimed. What the ring sweep
+established survives by something else — the drops falling **79 → 14 → 0** are
+independently reproducible, and *they* justify `StreamURBs = 16`.
+
+⚠ **One live lead, from the person wearing the headset:** the camera's activity
+**LED does not light** while this code streams, though the pixels are real and
+their mean luminance tracks the scene across a 5× range. A UVC camera's LED is
+wired to its capture state, so the camera may be producing frames **without
+considering itself started** — which would make the 32 % fill an expected
+consequence rather than a mystery. UVC treats the move *away from alternate 0
+after the commit* as the start signal; whether this sequence completes that
+handshake the way `uvcvideo` does is the open question now, and it is a question
+about **this code**.
+
+### What had been eliminated first, each by a measurement {#four-candidates-eliminated}
+
+Done while the question was still *"which condition differed"*, and kept because
+it is what a later session would otherwise redo:
 
 | candidate | how it died |
 | --- | --- |
