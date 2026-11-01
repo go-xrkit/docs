@@ -215,15 +215,33 @@ cannot be relied on.** What its error *was* is not claimed. What the ring sweep
 established survives by something else — the drops falling **79 → 14 → 0** are
 independently reproducible, and *they* justify `StreamURBs = 16`.
 
-⚠ **One live lead, from the person wearing the headset:** the camera's activity
+⚠ **One lead, from the person wearing the headset:** the camera's activity
 **LED does not light** while this code streams, though the pixels are real and
 their mean luminance tracks the scene across a 5× range. A UVC camera's LED is
-wired to its capture state, so the camera may be producing frames **without
-considering itself started** — which would make the 32 % fill an expected
-consequence rather than a mystery. UVC treats the move *away from alternate 0
-after the commit* as the start signal; whether this sequence completes that
-handshake the way `uvcvideo` does is the open question now, and it is a question
-about **this code**.
+usually wired to its capture state, so the camera may be producing frames
+**without considering itself started** — which would make the 32 % fill an
+expected consequence rather than a mystery.
+
+⛔ **But "the handshake is wrong" is ruled out by reading.** UVC treats the move
+*away from alternate 0 after the commit* as the start signal, and three
+independent implementations agree with this package on both decisions that could
+change whether the device considers itself started:
+
+| | the kernel's `uvcvideo` | `libuvc` | here |
+| --- | --- | --- | --- |
+| order | probe/commit, **then** set the alternate | same | same |
+| which alternate | smallest whose periodic payload ≥ the committed one | first that fits, *"assume that the packet sizes are increasing"* | smallest that fits |
+| `wMaxPacketSize` | `usb_endpoint_max_periodic_payload` | `(w & 0x7ff) * (((w >> 11) & 3) + 1)` | the same arithmetic |
+
+⚠ Which also means **an Android UVC viewer app would not discriminate**: those
+are libuvc-based and take this same path through `usbfs`, so their LED would
+behave as this one's does. And the kernel's own path cannot be driven from an
+unrooted phone to compare — `/dev/video0` is `system:camera 0660`, the `shell`
+user is not in group `camera`, and `dd` on it answers *Permission denied*.
+
+**What is left** is that this camera commits to 2400 bytes an interval and sends
+~780, consistently, in every condition tested, and that its LED may simply not
+be wired to UVC streaming on this unit. Neither is a defect this project can fix.
 
 ### What had been eliminated first, each by a measurement {#four-candidates-eliminated}
 
@@ -236,11 +254,17 @@ it is what a later session would otherwise redo:
 | the glasses' **display** being active | `dumpsys display` shows the Beast `state ON` on both evenings |
 | the camera's state after being **taken from `uvcvideo`** | measured straight after a replug, on a freshly bound device: the same signature |
 | a forced width vs the **default** pick | identical negotiation — `YUY2 640×480 @25fps`, payload 2400, alternate 5 |
+| the headset **worn** vs sitting on a desk | listed here as "the next thing to try" until it was tried, on 2026-11-01, with the headset on a head and the glasses pointed at a light: 9.97 fps, the same signature |
 
-**What is left:** the glasses were being **worn** for the 18 October runs and sat
-on a desk for all of these — uncontrolled both times, and the next thing to try.
-Beyond that nothing is named: temperature, firmware state, the hub and the
-phone's USB power budget are all unexamined.
+⛔ **That last row spent a day in the prose as an experiment still to run, after
+it had been run** — the eight-run list above already said *"the headset worn and
+on a desk"*. An elimination has to reach the **table**, not only the run list:
+the run list records conditions as attributes of a measurement, while the table
+is what a later session reads to decide what is still worth doing.
+
+Nothing beyond it is named: temperature, firmware state, the hub and the phone's
+USB power budget are all unexamined — and since the figure they were meant to
+explain is withdrawn, there is nothing left for them to explain.
 
 ⭐ An open question with four eliminations is worth more than an open question,
 and the eliminations are what a later session would otherwise redo.
