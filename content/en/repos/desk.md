@@ -355,6 +355,30 @@ there and only fails when called; a macOS retry policy waited fifteen seconds a
 start on three platforms; and nothing on a headset could turn head-following on.
 See [`go-xrkit/desk#254`](https://github.com/go-xrkit/desk/pull/254).
 
+### And the head is followed there {#the-head-is-followed-there}
+
+`-head` being on by default was only half of it: the flag turned on an action
+that then refused, because every head tracker in the package was macOS's.
+
+**The camera is reachable through `usbfs`**, which is the only road — this phone
+offers no external `camera2` device, and the Java USB API cannot submit
+isochronous transfers.
+[`go-xrkit/android`](https://github.com/go-xrkit/android)'s `OpenUVCCamera` does
+the nine-step UVC open on an **unrooted** phone, and `headflow` reads the yaw off
+those frames exactly as it does on a Mac.
+
+**And the consent dialog no longer blocks the start.** It is on the *phone's*
+screen while the glasses are on a head, so waiting for it meant waiting for
+somebody to put the glasses down — measured at twelve minutes, then half an
+hour, with the band ready the whole time. Only one ribbon position needs that
+permission, so the ask carries on in the background and the mirror joins
+position 1 when it lands. **Launch to pixels on the glasses: 53 milliseconds**,
+with no gesture.
+
+⚠ A late yes still counts, which is why that is not a timeout — a dialog
+answered five seconds too slowly must not be indistinguishable from one refused.
+See [`go-xrkit/desk#256`](https://github.com/go-xrkit/desk/pull/256).
+
 ## Coverage {#coverage}
 
 The geometry, the plan and the compositor have no operating system in them and
