@@ -76,6 +76,50 @@ deliberately **not hard-coded anywhere** — it is one emulator's figure. The
 *shape* of the failure is the finding, and the limit refuses in both directions
 rather than trusting a constant.
 
+## ⛔⛔ The APK's alignment check was passing without looking {#the-alignment-check-was-passing-without-looking}
+
+The APK is built without Gradle: `javac`, `d8`, `aapt2` and `apksigner` are the
+whole tool chain, ordered by `tools/xrpack` — Go, not the 130-line shell script
+that used to do it. Replacing that script was not a matter of taste. It ended in
+`zip` then `zipalign`, and **that pair cannot do the job it looks like it is
+doing**:
+
+```
+$ zipalign -c -P 16 -v 4 host/out/xrhost.apk
+   35929 lib/arm64-v8a/libxrapp.so (OK - compressed)
+Verification succesful                            # exit status 0
+```
+
+`zipalign` aligns entries that are **STORED**; `zip` deflates by default. The
+payload was compressed, so the check had no subject and answered `OK` — *"does
+not apply"* and *"is correct"* come out as the same word, and the exit status
+separates neither. Measured 2026-11-07 with build-tools 35.0.0.
+
+The packager writes the zip itself: the dex compressed, the payload stored and
+page-aligned. Same sources, same SDK, same day:
+
+| | the shell script | `tools/xrpack` |
+|---|---|---|
+| `lib/arm64-v8a/libxrapp.so` at | 35929 | **49152** = 3 × 16384 |
+| `zipalign -c -P 16` says | `OK - compressed` | `OK` |
+| APK | 1 139 277 B | 2 888 273 B |
+
+**16 KiB, not 4.** Of the flag the script used,
+[the zipalign documentation](https://developer.android.com/tools/zipalign) says
+*"It is recommended to use `-P 16` instead, as `-p` is deprecated"* — a device
+with 16 KiB pages cannot map a library aligned to 4.
+
+⚠ **The APK is bigger and the device carries less**, but only with
+`android:extractNativeLibs="false"` in the manifest: without it the platform
+extracts a second copy at install and the size is paid twice. A test asserts the
+attribute, because the packer and the manifest are two decisions in two files
+that have to agree and both ways of getting it wrong are silent.
+
+The SDK's own `zipalign` is still asked to agree — inside the build and in a
+test that carries its **control**: an APK with a compressed library, through the
+same command, asserted to exit **zero** while saying `compressed`. Without that
+control the suite would not be measuring what it claims.
+
 ## Coverage {#coverage}
 
 100% statement coverage, gated in CI, error branches included — 87 functions,
