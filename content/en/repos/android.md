@@ -319,6 +319,37 @@ They go to the durable directory outside every work tree that
 a repository, and a `.gitignore` entry would be the wrong fix — and the tool
 prints the path so a person can look and delete.
 
+### ⛔⛔ A guard its own argument could walk past {#a-guard-its-own-argument-could-walk-past}
+
+That destination used to be chosen by a shell script, which spent thirty lines
+walking it up to the filesystem root looking for a `.git` and refusing if it
+found one. Then, thirty lines later:
+
+```sh
+adb pull ".../files/$f" "$dir/$f"
+```
+
+with `$f` straight off the command line. So `pull-artifacts.sh ../../x.png`
+wrote **outside** the directory the script had just proved was safe, and six
+`..` left the home directory altogether.
+
+The same traversal was already written down in that repository for names
+arriving from the **device**, with the escaping names measured. These arrive
+from a command line, usually copied out of a log — and **a name read by a person
+is not more trustworthy for having been read by one.** The Go replacement
+applies two independent checks: the name must be a single ordinary path element
+from a *closed* character set, and the joined path must still be inside the
+chosen directory. One is a rule about strings, the other a question about the
+filesystem.
+
+⭐ **Two scripts left that repository on 2026-11-07 and 2026-11-08, each wrong in
+the same shape: a check whose subject could leave the room.** The other ran
+`zipalign` over a payload `zip` had compressed, so the alignment check did not
+apply and printed `OK - compressed` with exit status 0. The repeated lesson is
+now a gate rather than a note — a test refuses any interpreted script by name
+and by shebang, verified by being made to fail at both doors — and
+`find . -name "*.sh"` answers nothing.
+
 ## What it does not claim {#what-it-does-not-claim}
 
 **The glasses are attached now, and what that changes is marked above.** Until
