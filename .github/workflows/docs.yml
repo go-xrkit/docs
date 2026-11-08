@@ -41,8 +41,32 @@ jobs:
           fetch-depth: 0
 
       - name: Install Hugo ${{ env.HUGO_VERSION }}
+        # ⛔ THE DOWNLOAD RETRIES, because a 504 from a CDN is not a verdict
+        # about this repository. Measured on 2026-11-08: docs#26 failed with
+        #
+        #   curl: (22) The requested URL returned error: 504
+        #
+        # on this exact line, twice, two minutes apart -- and the same URL
+        # answered 504 from a workstation as well, so it was GitHub's release
+        # CDN and not the runner. A network error that reads as
+        # "build=FAILURE" costs a person the whole log before they learn it was
+        # never about their change.
+        #
+        # --retry-all-errors is what makes it cover a 504: --retry alone retries
+        # only what curl classifies as transient, and an HTTP response code is
+        # not in that set.
+        #
+        # ⚠ THE PATIENCE IS BOUNDED AND MODEST ON PURPOSE. --retry-max-time 180
+        # rides out a hiccup; it does not pretend to outlast an outage, because
+        # a job that spends half an hour failing is worse than one that fails
+        # in twenty seconds and says why.
+        #
+        # ⚠ AND THE CHECKSUM STILL DECIDES. A retry loop that accepted a
+        # truncated or substituted tarball would be worse than the failure: the
+        # sha256 below is the gate, and it is unchanged.
         run: |
-          curl -fsSL -o /tmp/hugo.tar.gz \
+          curl -fsSL --retry 8 --retry-delay 15 --retry-max-time 180 \
+            --retry-all-errors --connect-timeout 20 -o /tmp/hugo.tar.gz \
             "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.tar.gz"
           echo "${HUGO_SHA256}  /tmp/hugo.tar.gz" | sha256sum -c -
           sudo tar -xzf /tmp/hugo.tar.gz -C /usr/local/bin hugo
