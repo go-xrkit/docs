@@ -21,9 +21,9 @@ permissions:
   contents: read
 
 env:
+  # Hugo is installed with `go install github.com/gohugoio/hugo@v$HUGO_VERSION`,
+  # so the Go checksum database vouches for what is built. See the install step.
   HUGO_VERSION: "0.167.0"
-  # sha256 of hugo_${HUGO_VERSION}_linux-amd64.tar.gz, from the release's checksums.txt.
-  HUGO_SHA256: "4d84519b9f619e6d4c3fb45a50157abeabeb724f859c60605f44c23def6e1169"
   DOCS_URL: "https://go-xrkit.github.io/docs"
 
 jobs:
@@ -40,37 +40,40 @@ jobs:
           # The whole history: each page's date comes from git.
           fetch-depth: 0
 
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.3'
+
       - name: Install Hugo ${{ env.HUGO_VERSION }}
-        # ⛔ THE DOWNLOAD RETRIES, because a 504 from a CDN is not a verdict
-        # about this repository. Measured on 2026-11-08: docs#26 failed with
+        # ⛔⛔ HUGO COMES FROM THE MODULE PROXY, NOT FROM releases/download.
+        # Hugo is a Go program, so `go install` at a pinned version gets it
+        # through proxy.golang.org with the checksum database vouching for the
+        # bytes -- which is a stronger guarantee than the sha256 this step used
+        # to carry, because that hash had to be updated by hand on every bump
+        # and nothing checked that anybody had.
+        #
+        # ⭐ AND IT IS WHAT A LIVE OUTAGE FORCED. On 2026-11-08 GitHub's
+        # release-asset CDN answered 504 for releases/download, and this step
+        # failed three times in a row:
         #
         #   curl: (22) The requested URL returned error: 504
         #
-        # on this exact line, twice, two minutes apart -- and the same URL
-        # answered 504 from a workstation as well, so it was GitHub's release
-        # CDN and not the runner. A network error that reads as
-        # "build=FAILURE" costs a person the whole log before they learn it was
-        # never about their change.
+        # Three probes from a workstation at 11:16 CET placed the fault:
+        # hugo_0.167.0_linux-amd64.tar.gz 504, an unrelated repository's
+        # actionlint tarball 504, api.github.com 200. So releases/download
+        # specifically, for two unrelated repositories, while the REST API was
+        # fine. proxy.golang.org is a different service and was unaffected.
         #
-        # --retry-all-errors is what makes it cover a 504: --retry alone retries
-        # only what curl classifies as transient, and an HTTP response code is
-        # not in that set.
-        #
-        # ⚠ THE PATIENCE IS BOUNDED AND MODEST ON PURPOSE. --retry-max-time 180
-        # rides out a hiccup; it does not pretend to outlast an outage, because
-        # a job that spends half an hour failing is worse than one that fails
-        # in twenty seconds and says why.
-        #
-        # ⚠ AND THE CHECKSUM STILL DECIDES. A retry loop that accepted a
-        # truncated or substituted tarball would be worse than the failure: the
-        # sha256 below is the gate, and it is unchanged.
+        # ⚠ THIS IS THE PLAIN BUILD, NOT hugo_extended, which is what the
+        # tarball above was too -- the URL said hugo_, not hugo_extended_. The
+        # site builds with it: verified on a workstation against this
+        # repository's content, 19 pages with --panicOnWarning. A theme that
+        # starts needing SCSS transpiled by libsass will need the extended
+        # build and cgo, and that is a decision to take then, out loud.
         run: |
-          curl -fsSL --retry 8 --retry-delay 15 --retry-max-time 180 \
-            --retry-all-errors --connect-timeout 20 -o /tmp/hugo.tar.gz \
-            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.tar.gz"
-          echo "${HUGO_SHA256}  /tmp/hugo.tar.gz" | sha256sum -c -
-          sudo tar -xzf /tmp/hugo.tar.gz -C /usr/local/bin hugo
-          hugo version
+          go install "github.com/gohugoio/hugo@v${HUGO_VERSION}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          "$(go env GOPATH)/bin/hugo" version
 
       - name: Version
         id: version
