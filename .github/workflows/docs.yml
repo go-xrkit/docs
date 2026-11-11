@@ -42,7 +42,7 @@ jobs:
 
       - uses: actions/setup-go@v7
         with:
-          go-version: '1.27.3'
+          go-version: '1.27.4'
 
       - name: Install Hugo ${{ env.HUGO_VERSION }}
         # ⛔⛔ HUGO COMES FROM THE MODULE PROXY, NOT FROM releases/download.
@@ -160,7 +160,7 @@ jobs:
 
       - uses: actions/setup-go@v6
         with:
-          go-version: '1.27.3'
+          go-version: '1.27.4'
 
       # ⛔ THE VERSION GOES AT THE BRANCH ROOT. This step used to write
       # docs/<version>/ — but a project repository named "docs" is ALREADY
