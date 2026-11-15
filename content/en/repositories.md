@@ -5,11 +5,13 @@ weight: 40
 
 # Repositories {#repositories}
 
-Four repositories with code: the geometry, and the three things built on it.
+Five repositories with code: the geometry, a converter both applications share,
+and the three things built on them.
 
 | Repository | What it is |
 | --- | --- |
-| [`xrkit`]({{< relref "repos/xrkit.md" >}}) | the geometry — `pose`, `stereo`, `projection`, `warp`, `ribbon`, `glasses`. Every package testable with no headset attached, gated at 100% coverage |
+| [`xrkit`]({{< relref "repos/xrkit.md" >}}) | the geometry — `pose`, `stereo`, `projection`, `warp`, `ribbon`, `glasses`, `headflow`. Every package testable with no headset attached, gated at 100% coverage |
+| [`depth3d`]({{< relref "repos/depth3d.md" >}}) | one flat picture in, two eyes out — a real network on the Neural Engine where there is one, cues in the picture itself everywhere else, and it always says which ran |
 | [`player`]({{< relref "repos/player.md" >}}) | `xrplay film.mp4` — 360°, VR180 and 3D films, per eye, full screen on the glasses' own display |
 | [`desk`]({{< relref "repos/desk.md" >}}) | several computer screens on a flat band, scrolled from the keyboard |
 | [`android`]({{< relref "repos/android.md" >}}) | screen capture on Android and the glasses' UVC camera over `usbfs`, as a CGO-free Go binary talking to a small Java host |
@@ -59,3 +61,10 @@ measured one.
 - **`xrkit`** — the `glasses` catalogue grades every entry `Observed`,
   `Enumerated` or `Published`, and no macOS display-name artifact has been read
   for any model yet.
+- **`depth3d`** — the portable half is held at 100% in CI; the **accelerated
+  path is exercised only on a machine that has both a GPU and a Core ML depth
+  model**, so on a build runner those tests skip and say so. What stands in for
+  them is an agreement test: the GPU synthesis and the portable one differ on
+  0 bytes out of 86 999 040 on a real photograph — which is a strong check of
+  the two implementations against each other, and no check at all of either
+  against the real world.
