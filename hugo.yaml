@@ -84,4 +84,15 @@ params:
     width: normal
   editURL:
     enable: true
-    base: "https://github.com/go-xrkit/xrkit/edit/main/content/en"
+    # ⛔ THIS REPOSITORY, AND ENDING AT content. Two independent mistakes were
+    # here: it named go-xrkit/xrkit, which holds no content/ at all, and it
+    # ended at content/en while Hextra appends the page's path relative to
+    # content/ -- which already begins with en/. The rendered href was
+    #   github.com/go-xrkit/xrkit/edit/main/content/en/en/repos/depth3d.md
+    # on every page of this site, a 404 for both reasons at once.
+    #
+    # The form below is not inferred: go-desktop's site, fixed first, renders
+    # github.com/go-desktop/docs/edit/main/content/en/finding.md from a base
+    # ending at content -- read off the published page on 2026-11-15.
+    # See go-fleettools/fleettools#287, which counts 77 sites of 100.
+    base: "https://github.com/go-xrkit/docs/edit/main/content"
